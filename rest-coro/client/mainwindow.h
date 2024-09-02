@@ -23,16 +23,11 @@ public:
 private:
     void exec_connect();
 
-    QCoro::Task<void> exec_await();
-    QCoro::Task<QList<er::ER__people_get_200_response_inner>> exec_awaitCo();
+    QCoro::Task<void> exec();
 
-    QCoro::Task<void> exec_direct_rest();
+    QCoro::Task<QList<QString>> exec_rest_via_db();
 
-    QCoro::Task<void> exec_rest();
-
-    QCoro::Task<void> exec_rest_via_db();
-
-    QCoro::Task<void> exec_rest_via_generator();
+    QCoro::Task<void> exec_rest_pager_via_db();
 
 private slots:
     void on_pbStart_clicked();

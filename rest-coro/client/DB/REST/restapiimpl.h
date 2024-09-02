@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QCoroTask>
+#include <QCoroAsyncGenerator>
 #include <QDateTime>
 
 namespace db { namespace rest {
@@ -10,7 +11,7 @@ class RestApiImpl
 public:
     RestApiImpl();
 
-    QCoro::Task<QList<QString>> peopleGet(QDateTime dt);
+    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime dt);
 };
 
 }}

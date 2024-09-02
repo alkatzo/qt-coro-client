@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include <QCoroTask>
+
+#include "stream.h"
 
 namespace db {
 /**
@@ -21,7 +22,7 @@ public:
     static Db *makeDB();
 
 public:
-    virtual QCoro::Task<QList<QString>> peopleGet(QDateTime dt) = 0;
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt) = 0;
     virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) = 0;
     virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) = 0;
 };

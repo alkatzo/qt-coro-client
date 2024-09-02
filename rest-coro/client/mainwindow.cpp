@@ -8,7 +8,6 @@
 #include "er_integrationmanager.h"
 #include "DB/REST/restapiimpl.h"
 #include "DB/REST/restexecutor.h"
-#include "DB/REST/pager.h"
 #include "DB/backend.h"
 
 #define L qDebug().noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << __FUNCTION__
@@ -50,92 +49,45 @@ void MainWindow::exec_connect()
     });
 }
 
-/**
- * @brief MainWindow::exec_await
- * Execute by calling co_await exec_awaitCo();
- * @return
- */
-QCoro::Task<void> MainWindow::exec_await()
+QCoro::Task<void> MainWindow::exec()
 {
-    LSCOPE
-    QList<er::ER__people_get_200_response_inner> result = co_await exec_awaitCo();
-    for (const er::ER__people_get_200_response_inner& r : result) {
-        L << r.getFirstName() << r.getLastName() << r.getDateOfBirth();
-    }
-    co_return;
-}
-
-/**
- * @brief MainWindow::exec_awaitCo
- * execute by calling er::ApiDefault::peopleGet()
- * @return
- */
-QCoro::Task<QList<er::ER__people_get_200_response_inner>> MainWindow::exec_awaitCo()
-{
-    LSCOPE
-    auto api = er::IntegrationManager::erApi<er::ApiDefault>().release();
-
-    QList<er::ER__people_get_200_response_inner> result;
-    for (int i = 1; i < 4; i++) {
-        result.append(co_await api->peopleGet(QDateTime::currentDateTime(), i));
-    }
-
-    api->deleteLater();
-
-    co_return result;
-}
-
-/**
- * @brief MainWindow::exec_direct_rest
- * execute by calling db::rest::RestApiImpl::peopleGet()
- * @return
- */
-QCoro::Task<void> MainWindow::exec_direct_rest()
-{
-    LSCOPE
-    db::rest::RestApiImpl r;
-    QList<QString> res = co_await r.peopleGet(QDateTime::currentDateTime());
-
+    QList<QString> res = co_await exec_rest_via_db();
     for (const auto &s : res) {
         L << s;
     }
+    exec_rest_pager_via_db();
 }
 
 /**
- * @brief MainWindow::exec_rest
- * execute by calling db::Backend::peopleGet() via RestExecutor executor
+ * @brief MainWindow::exec_rest_via_db
+ * Shows how to fetch full result set and also return it up the stack.
+ * The result is returned to only demonstrate how it can be done if needed.
+ * In reality Stream object can be returned directly from the method and co_awaited up the stack
  * @return
  */
-QCoro::Task<void> MainWindow::exec_rest()
+QCoro::Task<QList<QString> > MainWindow::exec_rest_via_db()
 {
     LSCOPE
-    auto bk = db::Backend<db::rest::RestApiImpl, db::rest::RestExecutor>();
-    QList<QString> res = co_await bk.peopleGet(QDateTime::currentDateTime());
-
-    for (const auto &s : res) {
-        L << s;
-    }
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
+    QList<QString> res = co_await stream.result(); // the result is in res
+    co_return res;
 }
 
-QCoro::Task<void> MainWindow::exec_rest_via_db()
+/**
+ * @brief MainWindow::exec_rest_pager_via_db
+ * Shows how to fetch the result set by pages
+ * @return
+ */
+QCoro::Task<void> MainWindow::exec_rest_pager_via_db()
 {
     LSCOPE
-    QList<QString> res = co_await db::Db::the->peopleGet(QDateTime::currentDateTime());
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
 
-    for (const auto &s : res) {
-        L << s;
-    }
-}
-
-QCoro::Task<void> MainWindow::exec_rest_via_generator()
-{
-    LSCOPE
-    db::rest::Pager pager;
-    auto peoplePager = pager.peopleGet(QDateTime::currentDateTime());
     // We must co_await begin() to obtain the initial iterator
-    auto peopleIt = co_await peoplePager.begin();
+    auto peopleIt = co_await stream.begin();
+
     L << "Pages:";
-    while (peopleIt != peoplePager.end()) {
+    while (peopleIt != stream.end()) {
         L << "Next page:";
         QList<QString> page = *peopleIt;
         for (const auto &s : page) {
@@ -146,13 +98,7 @@ QCoro::Task<void> MainWindow::exec_rest_via_generator()
     }
 }
 
-void MainWindow::on_pbStart_clicked()
-{
-    // exec_await();
-    // exec_connect();
-    // exec_direct_rest();
-    // exec_rest();
-    // exec_rest_via_db();
-    exec_rest_via_generator();
+void MainWindow::on_pbStart_clicked() {
+    exec();
 }
 
