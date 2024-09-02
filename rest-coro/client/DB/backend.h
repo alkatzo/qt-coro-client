@@ -30,8 +30,8 @@ private:
     // DB interface
 public:
     virtual Stream<QList<QString>> peopleGet(QDateTime dt) override { return ex.template sync<Impl>(__func__, impl, &Impl::peopleGet, dt); }
-    virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, cb, impl, &Impl::peopleGet, dt); }
-    virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, ctx, cb, impl, &Impl::peopleGet, dt); }
+    // virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, cb, impl, &Impl::peopleGet, dt); }
+    // virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, ctx, cb, impl, &Impl::peopleGet, dt); }
 };
 
 }

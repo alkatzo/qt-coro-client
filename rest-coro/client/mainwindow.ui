@@ -17,14 +17,22 @@
    <widget class="QPushButton" name="pbStart">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>20</x>
       <y>20</y>
-      <width>80</width>
+      <width>101</width>
       <height>24</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Fetch full result using coro</string>
+    </property>
     <property name="text">
-     <string>Fetch all</string>
+     <string>Fetch all coro</string>
     </property>
    </widget>
    <widget class="QListView" name="listViewPaged">
@@ -50,14 +58,40 @@
    <widget class="QPushButton" name="pushByPage">
     <property name="geometry">
      <rect>
-      <x>579</x>
+      <x>549</x>
       <y>20</y>
-      <width>101</width>
+      <width>171</width>
       <height>24</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Load next page on demand</string>
+    </property>
     <property name="text">
-     <string>Fetch Next Page</string>
+     <string>Fetch next page</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbSignalSlot">
+    <property name="geometry">
+     <rect>
+      <x>149</x>
+      <y>20</y>
+      <width>131</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Fetch all signal</string>
     </property>
    </widget>
   </widget>

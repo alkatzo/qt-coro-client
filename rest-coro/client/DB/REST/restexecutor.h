@@ -4,6 +4,7 @@
 
 #include "DB/helper.h"
 #include "er_base.h"
+#include "DB/stream.h"
 
 namespace db { namespace rest {
 
@@ -15,25 +16,11 @@ namespace db { namespace rest {
  */
 class RestExecutor
 {
-public:
-    template <class _Callable, class... _Args>
-    using callable_result_t = typename std::invoke_result_t<_Callable, _Args...>;
-
 private:
     static inline QString asyncLog = QString(" -> %1").arg("RestExecutor::async");
 
 public:
     RestExecutor() {
-    }
-
-    template<typename O, typename R, typename CB, typename... Ps, typename... As>
-    void async(QString s, CB cb, O* o, R (O::*method)(Ps...), As&&... args) {
-        (o->*method)(args...);
-    }
-
-    template<typename O, typename R, typename CB, typename... Ps, typename... As>
-    void async(QString s, QObject *ctx, CB cb, O* o, R (O::*method)(Ps...), As&&... args) {
-        (o->*method)(args...);
     }
 
     template<typename O, typename R, typename... Ps, typename... As>

@@ -23,18 +23,20 @@ public:
     ~MainWindow();
 
 private:
-    void exec_connect();
-
-    QCoro::Task<void> exec();
-
-    QCoro::Task<QList<QString>> exec_rest_via_db();
-
-    QCoro::Task<void> exec_rest_pager_via_db();
+    void showResult(QStringListModel *m, const auto &res) {
+        QStringList lst = m->stringList();
+        for (const auto &s : res) {
+            lst.append(s);
+        }
+        m->setStringList(lst);
+    }
 
 private slots:
     QCoro::Task<void> on_pbStart_clicked();
 
     QCoro::Task<void> on_pushByPage_clicked();
+
+    void on_pbSignalSlot_clicked();
 
 private:
     Ui::MainWindow *ui;

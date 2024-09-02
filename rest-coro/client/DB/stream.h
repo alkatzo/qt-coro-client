@@ -55,14 +55,6 @@ public:
 
     Stream(QCoro::AsyncGenerator<T> &&g) : generator(std::move(g)) {}
 
-    auto begin() noexcept {
-        return generator.begin();
-    }
-
-    auto end() noexcept {
-        return generator.end();
-    }
-
     QCoro::Task<bool> hasNext() {
         if (eos) {
             co_return false;
@@ -96,6 +88,12 @@ public:
         }
 
         co_return res;
+    }
+
+    template<typename CB>
+    QCoro::Task<> result(CB cb) {
+        const auto &res = co_await result();
+        cb(res);
     }
 
 private:
