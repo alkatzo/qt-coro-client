@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    delete modelFull;
+    delete modelPaged;
+    delete _stream;
     delete ui;
 }
 
