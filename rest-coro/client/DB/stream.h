@@ -34,8 +34,8 @@ public:
         co_return it != generator.end();
     }
 
-    QCoro::AsyncGenerator<T>::iterator next() {
-        return it;
+    const T& next() {
+        return *it;
     }
 
     QCoro::Task<T> result() {

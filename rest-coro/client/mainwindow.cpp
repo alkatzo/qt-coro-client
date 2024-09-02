@@ -123,7 +123,7 @@ QCoro::Task<void> MainWindow::on_pbStart_clicked() {
 QCoro::Task<void> MainWindow::on_pushByPage_clicked()
 {
     if (co_await _stream->hasNext()) {
-        QList<QString> page = *_stream->next();
+        QList<QString> page = _stream->next();
 
         QStringList lst = modelPaged->stringList();
         for (const auto &s : page) {
