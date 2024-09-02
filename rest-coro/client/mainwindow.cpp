@@ -69,7 +69,7 @@ QCoro::Task<QList<QString> > MainWindow::exec_rest_via_db()
 {
     LSCOPE
     auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
-    QList<QString> res = co_await stream.result(); // the result is in res
+    QList<QString> res = co_await stream.result(); // full result set is in res
     co_return res;
 }
 
