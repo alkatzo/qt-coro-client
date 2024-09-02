@@ -24,8 +24,22 @@ public:
         return generator.end();
     }
 
+    QCoro::Task<bool> hasNext() {
+        if (it == QCoro::AsyncGenerator<T>::iterator(nullptr)) {
+            it = co_await generator.begin();
+        }
+        else if (it != generator.end()) {
+            co_await ++(it);
+        }
+        co_return it != generator.end();
+    }
+
+    QCoro::AsyncGenerator<T>::iterator next() {
+        return it;
+    }
+
     QCoro::Task<T> result() {
-        auto it = co_await generator.begin();
+        it = co_await generator.begin();
 
         T res;
         while (it != generator.end()) {
@@ -42,6 +56,7 @@ public:
 
 private:
     QCoro::AsyncGenerator<T> generator;
+    QCoro::AsyncGenerator<T>::iterator it{nullptr};
 };
 
 }

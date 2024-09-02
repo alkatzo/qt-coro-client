@@ -17,14 +17,47 @@
    <widget class="QPushButton" name="pbStart">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>100</x>
       <y>20</y>
       <width>80</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>Start Coro</string>
+     <string>Fetch all</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listViewPaged">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>80</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListView" name="listViewFull">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushByPage">
+    <property name="geometry">
+     <rect>
+      <x>579</x>
+      <y>20</y>
+      <width>101</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fetch Next Page</string>
     </property>
    </widget>
   </widget>

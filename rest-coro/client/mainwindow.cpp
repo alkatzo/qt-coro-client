@@ -28,8 +28,17 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    modelFull = new QStringListModel(this);
+    modelPaged = new QStringListModel(this);
+
+    ui->listViewFull->setModel(modelFull);
+    ui->listViewPaged->setModel(modelPaged);
+
     db::Db::makeDB();
     er::IntegrationManager::initialise();
+
+    _stream = new db::Stream(db::Db::the->peopleGet(QDateTime::currentDateTime()));
 }
 
 MainWindow::~MainWindow()
@@ -98,7 +107,29 @@ QCoro::Task<void> MainWindow::exec_rest_pager_via_db()
     }
 }
 
-void MainWindow::on_pbStart_clicked() {
-    exec();
+QCoro::Task<void> MainWindow::on_pbStart_clicked() {
+    LSCOPE
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
+    QList<QString> res = co_await stream.result(); // full result set is in res
+
+    QStringList lst = modelFull->stringList();
+    for (const auto &s : res) {
+        lst.append(s);
+    }
+    modelFull->setStringList(lst);
+}
+
+
+QCoro::Task<void> MainWindow::on_pushByPage_clicked()
+{
+    if (co_await _stream->hasNext()) {
+        QList<QString> page = *_stream->next();
+
+        QStringList lst = modelPaged->stringList();
+        for (const auto &s : page) {
+            lst.append(s);
+        }
+        modelPaged->setStringList(lst);
+    }
 }
 

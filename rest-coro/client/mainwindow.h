@@ -2,9 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListView>
 
 #include "qcoro/qcorotask.h"
 #include "openapi/ER_DefaultApi.h"
+#include "DB/stream.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,9 +32,16 @@ private:
     QCoro::Task<void> exec_rest_pager_via_db();
 
 private slots:
-    void on_pbStart_clicked();
+    QCoro::Task<void> on_pbStart_clicked();
+
+    QCoro::Task<void> on_pushByPage_clicked();
 
 private:
     Ui::MainWindow *ui;
+
+    QStringListModel *modelFull;
+    QStringListModel *modelPaged;
+
+    db::Stream<QList<QString>> * _stream;
 };
 #endif // MAINWINDOW_H
