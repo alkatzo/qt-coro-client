@@ -1,0 +1,1 @@
+#include "websockets/qcorowebsocketserver.h" // IWYU pragma: export

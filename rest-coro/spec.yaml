@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: People API
+  description: An API that returns a list of people based on a provided date-time.
+  version: 1.0.0
+
+servers:
+  - url: http://172.29.208.1:5000/v1
+
+paths:
+  /people:
+    get:
+      summary: Get people by date-time
+      description: Returns a list of people with their first name, last name, and date of birth.
+      parameters:
+        - in: query
+          name: datetime
+          schema:
+            type: string
+            format: date-time
+          required: true
+          description: The date-time to filter people by.
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+          description: The page number for pagination.
+      responses:
+        '200':
+          description: A JSON array of people objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                      description: The first name of the person.
+                    lastName:
+                      type: string
+                      description: The last name of the person.
+                    dateOfBirth:
+                      type: string
+                      format: date
+                      description: The date of birth of the person.
+        '400':
+          description: Invalid date-time format.
+        '500':
+          description: Internal server error.

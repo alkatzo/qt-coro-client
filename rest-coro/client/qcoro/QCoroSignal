@@ -1,0 +1,1 @@
+#include "core/qcorosignal.h" // IWYU pragma: export
