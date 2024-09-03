@@ -1,6 +1,7 @@
 #pragma once
 #include <QtConcurrent>
 #include <QCoroTask>
+#include <QCoroFuture>
 #include <QCoroAsyncGenerator>
 
 #include "DB/RDBMS/connectionmanager.h"
@@ -56,7 +57,7 @@ public:
             return _sync(s + syncLog, o, method, args...);
         };
         log_start(QString("%1 threadpool #activeThreads: %2").arg(s).arg(threadpool.activeThreadCount()));
-        co_return QtConcurrent::run(&threadpool, fun);
+        co_return co_await QtConcurrent::run(&threadpool, fun);
     }
 
     template<typename O, typename R, typename... Ps, typename... As>
