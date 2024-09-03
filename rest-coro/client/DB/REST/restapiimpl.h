@@ -6,6 +6,10 @@
 
 namespace db { namespace rest {
 
+inline bool isRestApi(const QString &name) {
+    return name.toLower() == "restapi";
+}
+
 class RestApiImpl
 {
 public:
