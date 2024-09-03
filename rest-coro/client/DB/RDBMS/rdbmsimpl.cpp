@@ -26,7 +26,7 @@ QCoro::AsyncGenerator<QList<QString> > RdbmsImpl::peopleGet(QDateTime &dbTime) {
 
 QCoro::Task<QList<QString> > RdbmsImpl::_peopleGet(QDateTime &dbTime) {
     co_return QtConcurrent::run(&threadpool, []() {
-        QThread::sleep(3);
+        QThread::sleep(1);
         return QList<QString>{"Hello", "Bonjour", "Pryvit"};
     });
 }
