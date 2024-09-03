@@ -23,8 +23,6 @@ public:
 
 public:
     virtual Stream<QList<QString>> peopleGet(QDateTime dt) = 0;
-    // virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) = 0;
-    // virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) = 0;
 };
 
 }
