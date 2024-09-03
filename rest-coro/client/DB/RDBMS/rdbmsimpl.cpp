@@ -20,7 +20,7 @@ void ODBCBuilderDyn::refresh() {
 }
 
 QList<QString> RdbmsImpl::peopleGet(QDateTime &dbTime, SqlQuery query) {
-    QThread::sleep(10);
+    QThread::sleep(100);
     return QList<QString>{"Hello", "Bonjour", "Pryvit"};
 }
 
