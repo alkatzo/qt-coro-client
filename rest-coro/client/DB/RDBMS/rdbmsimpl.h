@@ -8,39 +8,10 @@
 #include <QCoroAsyncGenerator>
 #include <QThread>
 
-#include "DB/RDBMS/connectionmanager.h"
+#include "DB/RDBMS/dbtraits.h"
 #include "DB/RDBMS/sqlquery.h"
 
 namespace db { namespace rdbms {
-
-inline bool isMssql(const QString &name) {
-    return name.toLower() == MSODBCAdapter::type;
-}
-
-//type traits for differnt use cases
-struct ODBCBuilderDyn {
-    static void refresh();
-    inline static QString dsn{};
-    inline static std::shared_ptr<db::rdbms::IODBCAdapter> adapter{};
-};
-
-using ConMgrT = db::rdbms::ODBCConnectionManager<ODBCBuilderDyn>;
-
-template<typename ODBCAdapterT>
-struct ODBCBuilder {
-    static void refresh() {
-        dsn = ODBCAdapterT::dsn();
-        adapter = std::make_shared<ODBCAdapterT>();
-    }
-    inline static QString dsn{};
-    inline static std::shared_ptr<db::rdbms::IODBCAdapter> adapter{};
-};
-
-template<typename DbT>
-struct DBTraits {
-    using ODBCT = ODBCBuilder<typename DbT::ODBCAdapterT>;
-    using ConMgrT = db::rdbms::ODBCConnectionManager<ODBCT>;
-};
 
 /**
  * @brief The RdbmsImpl class
@@ -52,13 +23,7 @@ public:
     RdbmsImpl() = default;
     virtual ~RdbmsImpl() = default;
 
-    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime &dbTime);
-
-private:
-    QCoro::Task<QList<QString>> _peopleGet(QDateTime &dbTime);
-
-private:
-    QThreadPool threadpool;
+    QList<QString> peopleGet(QDateTime &dbTime, SqlQuery query);
 };
 
 }}

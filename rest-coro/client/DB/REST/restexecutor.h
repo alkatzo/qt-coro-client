@@ -24,7 +24,7 @@ public:
     }
 
     template<typename O, typename R, typename... Ps, typename... As>
-    auto sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
+    auto sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
         return (o->*method)(args...);
     }
 };

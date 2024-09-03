@@ -19,16 +19,9 @@ void ODBCBuilderDyn::refresh() {
     }
 }
 
-QCoro::AsyncGenerator<QList<QString> > RdbmsImpl::peopleGet(QDateTime &dbTime) {
-    QList<QString> ret = co_await _peopleGet(dbTime);
-    co_yield ret;
-}
-
-QCoro::Task<QList<QString> > RdbmsImpl::_peopleGet(QDateTime &dbTime) {
-    co_return QtConcurrent::run(&threadpool, []() {
-        QThread::sleep(1);
-        return QList<QString>{"Hello", "Bonjour", "Pryvit"};
-    });
+QList<QString> RdbmsImpl::peopleGet(QDateTime &dbTime, SqlQuery query) {
+    QThread::sleep(10);
+    return QList<QString>{"Hello", "Bonjour", "Pryvit"};
 }
 
 }}

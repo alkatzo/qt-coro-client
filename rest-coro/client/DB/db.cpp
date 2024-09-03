@@ -3,14 +3,11 @@
 #include "DB/REST/restapiimpl.h"
 #include "DB/REST/restexecutor.h"
 
-#include "DB/coroexecutor.h"
 #include "DB/RDBMS/dbpoolexecutor.h"
 #include "DB/RDBMS/rdbmsimpl.h"
+#include "DB/RDBMS/dbtraits.h"
 #include "DB/RDBMS/mssql.h"
 
-template<typename T> using SimpleExecutorT = db::SimpleExecutor<T>;
-template<typename T> using ExecutorT = db::CoroExecutor<T>;
-template<typename T> using DBExecutorT = db::rdbms::DBPoolExecutor<T>;
 
 namespace db {
 
@@ -20,13 +17,13 @@ Db *Db::makeDB() {
         the = nullptr;
     }
 
-    // QString driver = "mssql";
-    QString driver = "restapi";
+    QString driver = "mssql";
+    // QString driver = "restapi";
 
     if (db::rdbms::isMssql(driver)) {
         using DBTraitsT = db::rdbms::DBTraits<db::rdbms::MSSQL>;
         DBTraitsT::ODBCT::refresh();
-        the = new db::Backend<db::rdbms::RdbmsImpl, db::rest::RestExecutor>;
+        the = new db::Backend<db::rdbms::RdbmsImpl, db::rdbms::DBPoolExecutor<DBTraitsT::ConMgrT>>;
     }
     else if (db::rest::isRestApi(driver)) {
         the = new db::Backend<db::rest::RestApiImpl, db::rest::RestExecutor>;

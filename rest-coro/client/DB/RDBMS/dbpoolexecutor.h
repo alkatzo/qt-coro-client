@@ -1,5 +1,7 @@
 #pragma once
 #include <QtConcurrent>
+#include <QCoroTask>
+#include <QCoroAsyncGenerator>
 
 #include "DB/RDBMS/connectionmanager.h"
 #include "DB/RDBMS/sqlquery.h"
@@ -18,8 +20,9 @@ namespace db { namespace rdbms {
 template<typename ConMgrT>
 class DBPoolExecutor {
 private:
+    static inline QString _syncLog = QString(" -> %1").arg("DBPoolExecutor::_sync");
     static inline QString syncLog = QString(" -> %1").arg("DBPoolExecutor::sync");
-    static inline QString asyncLog = QString(" -> %1").arg("DBPoolExecutor::async");
+    static inline QString syncpagedLog = QString(" -> %1").arg("DBPoolExecutor::sync_paged");
 
 public:
     using QueryT = typename ConMgrT::QueryT;
@@ -35,19 +38,10 @@ public:
     ~DBPoolExecutor() {
     }
 
-    template<typename  Binding, typename... As>
-    auto sync(QString s, Binding&& b, As... args) {
-        db::log_start(s + syncLog);
-        auto query = cm.makeQuery();
-        auto r = b(args..., query);
-        cm.releaseQuery(query);
-        db::log_finish(s, r);
-        return r;
-    }
-
     template<typename O, typename R, typename... Ps, typename... As>
-    R sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
-        db::log_start(s + syncLog);
+    R _sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
+        LSCOPE
+        db::log_start(s + _syncLog);
         auto query = cm.makeQuery();
         R r = (o->*method)(args..., query);
         cm.releaseQuery(query);
@@ -55,23 +49,21 @@ public:
         return r;
     }
 
-    template<typename  Binding, typename... As>
-    auto async(QString s, Binding&& b, As... args) {
-        using R = std::invoke_result_t<Binding, As..., QueryT>;
+    template<typename O, typename R, typename... Ps, typename... As>
+    QCoro::Task<R> sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
+        LSCOPE
         std::function<R()> fun = [=, this]() {
-            return sync(s + asyncLog, b, args...);
+            return _sync(s + syncLog, o, method, args...);
         };
         log_start(QString("%1 threadpool #activeThreads: %2").arg(s).arg(threadpool.activeThreadCount()));
-        return QtConcurrent::run(&threadpool, fun);
+        co_return QtConcurrent::run(&threadpool, fun);
     }
 
     template<typename O, typename R, typename... Ps, typename... As>
-    QFuture<R> async(QString s, O *o, R (O::*method)(Ps...), As... args) {
-        std::function<R()> fun = [=, this]() {
-            return sync(s + asyncLog, o, method, args...);
-        };
-        log_start(QString("%1 threadpool #activeThreads: %2").arg(s).arg(threadpool.activeThreadCount()));
-        return QtConcurrent::run(&threadpool, fun);
+    QCoro::AsyncGenerator<R> sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
+        LSCOPE
+        QList<QString> ret = co_await sync(s + syncpagedLog, o, method, args...);
+        co_yield ret;
     }
 
 protected:

@@ -9,19 +9,8 @@
 #include "DB/REST/restapiimpl.h"
 #include "DB/REST/restexecutor.h"
 #include "DB/backend.h"
+#include "DB/helper.h"
 
-#define L qDebug().noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << __FUNCTION__
-struct LogScope {
-    QString msg;
-    LogScope(const QString& m) : msg(m) {
-        qDebug().noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << msg << "->";
-    }
-
-    ~LogScope() {
-        qDebug().noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << msg << "<-";
-    }
-};
-#define LSCOPE LogScope l(__FUNCTION__);
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

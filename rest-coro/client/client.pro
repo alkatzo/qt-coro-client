@@ -25,6 +25,7 @@ SOURCES += \
 HEADERS += \
     DB/RDBMS/connectionmanager.h \
     DB/RDBMS/dbpoolexecutor.h \
+    DB/RDBMS/dbtraits.h \
     DB/RDBMS/mssql.h \
     DB/RDBMS/odbcclient.h \
     DB/RDBMS/rdbmsimpl.h \
@@ -34,7 +35,6 @@ HEADERS += \
     DB/REST/restexecutor.h \
     DB/backend.h \
     DB/concepts.h \
-    DB/coroexecutor.h \
     DB/db.h \
     DB/helper.h \
     DB/simpleexecutor.h \
