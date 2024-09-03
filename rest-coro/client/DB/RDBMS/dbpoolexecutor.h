@@ -76,7 +76,7 @@ public:
      * @return QCoro::AsyncGenerator<R>
      * Simulate paged extraction from Sql server by getting R from sync() and wrapping it in QCoro::AsyncGenerator<R>
      * QCoro::AsyncGenerator<R> coro cannot co_await directly on QFuture, have to co_await on QCoro::Task<R>
-     * Sql paging simulation is needed to match the one from paged REST APIs
+     * Sql paging simulation is required in order to match the one from paged REST APIs
      * It gets converted to Stream<R> up the stack
      */
     template<typename O, typename R, typename... Ps, typename... As>
