@@ -20,7 +20,7 @@ struct LogScope {
         LOG << msg << "<-";
     }
 };
-#define LSCOPE LogScope l(__FUNCTION__);
+#define LSCOPE LogScope l(__func__);
 
 namespace db {
 

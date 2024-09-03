@@ -39,6 +39,12 @@ public:
     ~DBPoolExecutor() {
     }
 
+    /**
+     * @brief _sync
+     * @param args - variadic args for O::*method
+     * @return R - result of O::*method
+     * This method runs in a thread allocated in the threadpool
+     */
     template<typename O, typename R, typename... Ps, typename... As>
     R _sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
         LSCOPE
@@ -50,6 +56,11 @@ public:
         return r;
     }
 
+    /**
+     * @brief sync
+     * @return QCoro::Task<R>
+     * Launches O::*method in a seprate thread, co_awaits on its results via QFuture and co_returns QCoro::Task<R>
+     */
     template<typename O, typename R, typename... Ps, typename... As>
     QCoro::Task<R> sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
         LSCOPE
@@ -57,9 +68,17 @@ public:
             return _sync(s + syncLog, o, method, args...);
         };
         log_start(QString("%1 threadpool #activeThreads: %2").arg(s).arg(threadpool.activeThreadCount()));
-        co_return co_await QtConcurrent::run(&threadpool, fun);
+        co_return co_await QtConcurrent::run(&threadpool, fun); // co_return R
     }
 
+    /**
+     * @brief sync_paged
+     * @return QCoro::AsyncGenerator<R>
+     * Simulate paged extraction from Sql server by getting R from sync() and wrapping it in QCoro::AsyncGenerator<R>
+     * QCoro::AsyncGenerator<R> coro cannot co_await directly on QFuture, have to co_await on QCoro::Task<R>
+     * Sql paging simulation is needed to match the one from paged REST APIs
+     * It gets converted to Stream<R> up the stack
+     */
     template<typename O, typename R, typename... Ps, typename... As>
     QCoro::AsyncGenerator<R> sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
         LSCOPE
