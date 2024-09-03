@@ -3,7 +3,10 @@
 #include <QObject>
 #include <QtSql>
 #include <QtDebug>
+#include <QFuture>
+#include <QCoroTask>
 #include <QCoroAsyncGenerator>
+#include <QThread>
 
 #include "DB/RDBMS/connectionmanager.h"
 #include "DB/RDBMS/sqlquery.h"
@@ -49,7 +52,13 @@ public:
     RdbmsImpl() = default;
     virtual ~RdbmsImpl() = default;
 
-    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime &dbTime, SqlQuery query);
+    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime &dbTime);
+
+private:
+    QCoro::Task<QList<QString>> _peopleGet(QDateTime &dbTime);
+
+private:
+    QThreadPool threadpool;
 };
 
 }}

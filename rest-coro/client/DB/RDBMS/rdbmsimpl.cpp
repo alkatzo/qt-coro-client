@@ -1,8 +1,9 @@
 #include "DB/RDBMS/rdbmsimpl.h"
 
+#include <QCoroTask>
+#include <QCoroFuture>
+#include <QtConcurrent>
 #include <QDateTime>
-#include <QRegularExpression>
-#include <QStandardItem>
 
 namespace db { namespace rdbms {
 
@@ -18,8 +19,16 @@ void ODBCBuilderDyn::refresh() {
     }
 }
 
-QCoro::AsyncGenerator<QList<QString> > RdbmsImpl::peopleGet(QDateTime &dbTime, SqlQuery query) {
-    return {};
+QCoro::AsyncGenerator<QList<QString> > RdbmsImpl::peopleGet(QDateTime &dbTime) {
+    QList<QString> ret = co_await _peopleGet(dbTime);
+    co_yield ret;
+}
+
+QCoro::Task<QList<QString> > RdbmsImpl::_peopleGet(QDateTime &dbTime) {
+    co_return QtConcurrent::run(&threadpool, []() {
+        QThread::sleep(3);
+        return QList<QString>{"Hello", "Bonjour", "Pryvit"};
+    });
 }
 
 }}
