@@ -44,6 +44,8 @@ private slots:
 
     void on_pbSignalSlotAll_clicked();
 
+    void on_checkBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 
@@ -52,5 +54,7 @@ private:
     QStringListModel modelPaged;
 
     db::Stream<QList<QString>> * _stream;
+
+    QObject *testCtx = nullptr;
 };
 #endif // MAINWINDOW_H

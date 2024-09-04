@@ -14,6 +14,10 @@ namespace db {
 class Db : public QObject
 {
     Q_OBJECT
+
+private:
+    static inline QScopedPointer<QObject> alive{new QObject};
+
 public:
     inline static Db *the = nullptr;
 
@@ -23,8 +27,8 @@ public:
     static Db *makeDB();
 
 public:
-    virtual Stream<QList<QString>> peopleGet(QDateTime dt) = 0;
-    virtual Task<QList<QString>> peopleGetAll(QDateTime dt) = 0;
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt, QObject *ctx = alive.get()) = 0;
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, QObject *ctx = alive.get()) = 0;
 };
 
 }

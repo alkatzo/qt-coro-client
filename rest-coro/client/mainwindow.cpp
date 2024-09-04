@@ -34,6 +34,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    LOG << arg1;
+    if (arg1 == Qt::CheckState::Checked) {
+        testCtx = new QObject;
+    }
+    else if (arg1 == Qt::CheckState::Unchecked) {
+        delete testCtx;
+    }
+}
+
 /**
  * @brief MainWindow::on_pbStart_clicked
  * Load full result set via coro with pages
@@ -83,7 +94,7 @@ void MainWindow::on_pbSignalSlot_clicked()
 QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
 {
     LSCOPE
-    const QList<QString> &res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime()).result();
+    const QList<QString> &res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result();
     showResult(modelFullAll, res);
 }
 
@@ -95,10 +106,13 @@ QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
 void MainWindow::on_pbSignalSlotAll_clicked()
 {
     LSCOPE
-    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime()));
+    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx));
     task->result([task, this](const auto &res) {
         showResult(modelFullAll, res);
         delete task;
     });
 }
+
+
+
 
