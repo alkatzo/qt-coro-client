@@ -20,9 +20,11 @@ public:
     }
 
     template<typename CB>
-    QCoro::Task<> result(CB cb) {
+    requires (std::is_invocable_v<CB, T>)
+    QCoro::Task<> result(CB &&cb) {
+        auto callback = std::forward<CB>(cb);
         const auto &res = co_await result();
-        cb(res);
+        callback(res);
     }
 
 private:

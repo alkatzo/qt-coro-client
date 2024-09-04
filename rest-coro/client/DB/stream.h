@@ -6,45 +6,6 @@
 namespace db {
 
 template<typename T>
-class Stream;
-
-/**
- * @brief The StreamIterator class
- * TODO
- */
-template<typename T>
-class StreamIterator {
-
-public:
-    using iterator_category = std::input_iterator_tag;
-    using difference_type = std::ptrdiff_t;
-    using value_type = std::remove_reference_t<T>;
-    using reference = std::add_lvalue_reference_t<T>;
-    using pointer = std::add_pointer_t<value_type>;
-
-    StreamIterator(Stream<T> *s) : stream(s) {}
-    StreamIterator(StreamIterator &&other) = default;
-
-    QCoro::Task<StreamIterator> operator++() noexcept {
-        co_return *this;
-    }
-
-    reference operator *() const noexcept ;
-
-    bool operator==(const StreamIterator &other) const noexcept {
-        return stream = other.stream && pos = other.pos;
-    }
-
-    bool operator!=(const StreamIterator &other) const noexcept {
-        return !(*this == other);
-    }
-
-private:
-    Stream<T> *stream{nullptr};
-    int pos = 0;
-};
-
-template<typename T>
 class Stream
 {
 public:
@@ -91,9 +52,12 @@ public:
     }
 
     template<typename CB>
-    QCoro::Task<> result(CB cb) {
+    requires (std::is_invocable_v<CB, T>)
+    QCoro::Task<> result(CB &&cb) {
+        // Move the callback into the coroutine, otherwise the temp cb is destroyed after the coro is suspended
+        auto callback = std::forward<CB>(cb);
         const auto &res = co_await result();
-        cb(res);
+        callback(res);
     }
 
 private:
