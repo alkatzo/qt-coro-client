@@ -16,6 +16,7 @@ public:
     RestApiImpl();
 
     QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime dt);
+    QCoro::Task<QList<QString>> peopleGetAll(QDateTime dt);
 };
 
 }}

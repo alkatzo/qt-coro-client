@@ -30,6 +30,7 @@ private:
     // DB interface
 public:
     virtual Stream<QList<QString>> peopleGet(QDateTime dt) override { return ex.template sync_paged<Impl>(__func__, impl, &Impl::peopleGet, dt); }
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt) override { return ex.template sync<Impl>(__func__, impl, &Impl::peopleGetAll, dt); }
 };
 
 }

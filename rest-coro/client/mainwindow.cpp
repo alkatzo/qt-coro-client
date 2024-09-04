@@ -18,11 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    modelFull = new QStringListModel(this);
-    modelPaged = new QStringListModel(this);
-
-    ui->listViewFull->setModel(modelFull);
-    ui->listViewPaged->setModel(modelPaged);
+    ui->listViewFull->setModel(&modelFull);
+    ui->listViewFullAll->setModel(&modelFullAll);
+    ui->listViewPaged->setModel(&modelPaged);
 
     db::Db::makeDB();
     er::IntegrationManager::initialise();
@@ -32,24 +30,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete modelFull;
-    delete modelPaged;
     delete _stream;
     delete ui;
 }
 
 /**
  * @brief MainWindow::on_pbStart_clicked
- * Load full result set via coro
+ * Load full result set via coro with pages
  * @return
  */
-QCoro::Task<void> MainWindow::on_pbStart_clicked() {
+QCoro::Task<void> MainWindow::on_pbStart_clicked()
+{
     LSCOPE
     auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
     const QList<QString> &res = co_await stream.result(); // full result set is in res
     showResult(modelFull, res);
 }
-
 
 /**
  * @brief MainWindow::on_pushByPage_clicked
@@ -67,7 +63,8 @@ QCoro::Task<void> MainWindow::on_pushByPage_clicked()
 
 /**
  * @brief MainWindow::on_pbSignalSlot_clicked
- * Load full result set via signal / slot
+ * Load full result set via signal / slot with pages
+ * @return
  */
 void MainWindow::on_pbSignalSlot_clicked()
 {
@@ -76,6 +73,32 @@ void MainWindow::on_pbSignalSlot_clicked()
     stream->result([stream, this](const auto &res) {
         showResult(modelFull, res);
         delete stream;
+    });
+}
+
+/**
+ * @brief MainWindow::on_pbStartAll_clicked
+ * Load full result set via coro
+ */
+QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
+{
+    LSCOPE
+    const QList<QString> &res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime()).result();
+    showResult(modelFullAll, res);
+}
+
+/**
+ * @brief MainWindow::on_pbSignalSlotAll_clicked
+ * Load full result set via signal / slot
+ * @return
+ */
+void MainWindow::on_pbSignalSlotAll_clicked()
+{
+    LSCOPE
+    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime()));
+    task->result([task, this](const auto &res) {
+        showResult(modelFullAll, res);
+        delete task;
     });
 }
 

@@ -37,8 +37,8 @@ HEADERS += \
     DB/concepts.h \
     DB/db.h \
     DB/helper.h \
-    DB/simpleexecutor.h \
     DB/stream.h \
+    DB/task.h \
     er_apidefault.h \
     er_base.h \
     er_dispatcher.h \

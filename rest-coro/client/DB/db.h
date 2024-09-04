@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "stream.h"
+#include "task.h"
 
 namespace db {
 /**
@@ -23,6 +24,7 @@ public:
 
 public:
     virtual Stream<QList<QString>> peopleGet(QDateTime dt) = 0;
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt) = 0;
 };
 
 }

@@ -29,7 +29,7 @@
      </font>
     </property>
     <property name="toolTip">
-     <string>Fetch full result using coro</string>
+     <string>Fetch full result using coro with pages</string>
     </property>
     <property name="text">
      <string>Fetch all coro</string>
@@ -90,8 +90,47 @@
       <pointsize>12</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>Fetsh all by signal using pages</string>
+    </property>
     <property name="text">
      <string>Fetch all signal</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbStartAll">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>320</y>
+      <width>101</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fetch all coro</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbSignalSlotAll">
+    <property name="geometry">
+     <rect>
+      <x>169</x>
+      <y>320</y>
+      <width>101</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fetch all signal</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listViewFullAll">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
     </property>
    </widget>
   </widget>

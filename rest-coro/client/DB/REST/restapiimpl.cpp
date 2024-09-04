@@ -23,4 +23,19 @@ QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt)
     api->deleteLater();
 }
 
+QCoro::Task<QList<QString> > RestApiImpl::peopleGetAll(QDateTime dt)
+{
+    auto api = er::IntegrationManager::erApi<er::ApiDefault>().release();
+    const QList<er::ER__people_get_200_response_inner> result = co_await api->peopleGet(dt);
+    QList<QString> ret;
+    for (const er::ER__people_get_200_response_inner& e : result) {
+        QString str = QString("%1 %2 %3").arg(e.getFirstName()).arg(e.getLastName()).arg(e.getDateOfBirth().toString());
+        ret.append(str);
+    }
+
+    api->deleteLater();
+
+    co_return ret;
+}
+
 }}

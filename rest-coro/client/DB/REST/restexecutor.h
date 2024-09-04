@@ -10,9 +10,7 @@ namespace db { namespace rest {
 
 /**
  * @brief The RestExecutor class
- * Uses QThreadPool class for async calls
- * sync calls are not supported
- * async calls execute on the thread pool and return QFuture
+ * This class is required to conform with the rdbms way of executing
  */
 class RestExecutor
 {
@@ -24,8 +22,13 @@ public:
     }
 
     template<typename O, typename R, typename... Ps, typename... As>
-    auto sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
+    auto sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
         return (o->*method)(args...);
+    }
+
+    template<typename O, typename R, typename... Ps, typename... As>
+    auto sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
+        return sync(s, o, method, args...);
     }
 };
 

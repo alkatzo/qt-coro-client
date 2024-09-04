@@ -23,26 +23,33 @@ public:
     ~MainWindow();
 
 private:
-    void showResult(QStringListModel *m, const auto &res) {
-        QStringList lst = m->stringList();
+    void showResult(QStringListModel &m, const auto &res) {
+        QStringList lst = m.stringList();
         for (const auto &s : res) {
             lst.append(s);
         }
-        m->setStringList(lst);
+        m.setStringList(lst);
     }
 
 private slots:
+    // Paged
     QCoro::Task<void> on_pbStart_clicked();
 
     QCoro::Task<void> on_pushByPage_clicked();
 
     void on_pbSignalSlot_clicked();
 
+    // Full
+    QCoro::Task<void> on_pbStartAll_clicked();
+
+    void on_pbSignalSlotAll_clicked();
+
 private:
     Ui::MainWindow *ui;
 
-    QStringListModel *modelFull;
-    QStringListModel *modelPaged;
+    QStringListModel modelFull;
+    QStringListModel modelFullAll;
+    QStringListModel modelPaged;
 
     db::Stream<QList<QString>> * _stream;
 };
