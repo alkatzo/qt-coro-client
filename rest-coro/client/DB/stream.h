@@ -59,7 +59,9 @@ public:
     QCoro::Task<> result(CB &&cb) {
         // Move the callback into the coroutine, otherwise the temp cb is destroyed after the coro is suspended
         auto callback = std::forward<CB>(cb);
+
         const auto &res = co_await result();
+
         callback(res);
     }
 

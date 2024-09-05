@@ -16,9 +16,7 @@ public:
     Task(Task &&) noexcept = default;
     Task &operator=(Task &&) noexcept = default;
 
-    Task(QCoro::Task<T> &&t, QObject *ctx) : task(std::move(t)), ctx(ctx) {
-        LOG << ctx;
-    }
+    Task(QCoro::Task<T> &&t, QObject *ctx) : task(std::move(t)), ctx(ctx) {}
 
     template<typename DeleterT = Deleter>
     QCoro::Task<T> result() {

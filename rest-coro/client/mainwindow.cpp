@@ -34,6 +34,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/**
+ * @brief MainWindow::on_checkBox_stateChanged
+ * This is to test testCtx deletion while coro is suspended
+ * Create testCtx before executing coro
+ * Delete testCtx while the coro is suspended
+ */
 void MainWindow::on_checkBox_stateChanged(int arg1)
 {
     LOG << arg1;
