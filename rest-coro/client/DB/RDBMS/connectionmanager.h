@@ -67,7 +67,7 @@ public:
         return query;
     }
 
-    void releaseQuery(SqlQuery query) {
+    void releaseQuery(SqlQuery &query) {
         query.close();
     }
 
