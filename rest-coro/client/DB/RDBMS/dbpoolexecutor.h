@@ -84,7 +84,6 @@ public:
      */
     template<typename O, typename R, typename... Ps, typename... As>
     QCoro::AsyncGenerator<R> sync_paged(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
-        LSCOPE
         QList<QString> ret = co_await sync(s + syncpagedLog, c, o, method, args...);
         co_yield ret;
     }

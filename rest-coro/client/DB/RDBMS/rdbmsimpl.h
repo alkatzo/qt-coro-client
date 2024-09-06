@@ -17,8 +17,8 @@ public:
     RdbmsImpl() = default;
     virtual ~RdbmsImpl() = default;
 
-    QList<QString> peopleGet(QDateTime dbTime, SqlQuery query);
-    QList<QString> peopleGetAll(QDateTime dbTime, SqlQuery query);
+    QList<QString> peopleGet(QDateTime dbTime, SqlQuery &query);
+    QList<QString> peopleGetAll(QDateTime dbTime, SqlQuery &query);
 };
 
 }}
