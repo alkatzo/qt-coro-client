@@ -22,16 +22,36 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listViewFullAll->setModel(&modelFullAll);
     ui->listViewPaged->setModel(&modelPaged);
 
+    ui->checkBox->setChecked(true);
+
     db::Db::makeDB();
     er::IntegrationManager::initialise();
 
-    _stream = new db::Stream(db::Db::the->peopleGet(QDateTime::currentDateTime()));
+    _stream = createStream();
 }
 
 MainWindow::~MainWindow()
 {
-    delete _stream;
     delete ui;
+}
+
+db::Stream<QList<QString> > MainWindow::createStream() {
+    return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_source.get_token()});
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    LOG << index;
+    switch (index) {
+    case 0: {
+        stop_source = std::stop_source();
+        _stream = createStream();
+        break;
+    }
+    case 1:
+        stop_source.request_stop();
+        break;
+    }
 }
 
 /**
@@ -41,13 +61,15 @@ MainWindow::~MainWindow()
  * Delete testCtx while the coro is suspended
  */
 void MainWindow::on_checkBox_stateChanged(int arg1)
-{
-    LOG << arg1;
+{    
     if (arg1 == Qt::CheckState::Checked) {
+        LOG << "Created context testCtx";
         testCtx = new QObject;
     }
     else if (arg1 == Qt::CheckState::Unchecked) {
+        LOG << "Deleted context testCtx";
         delete testCtx;
+        testCtx = nullptr;
     }
 }
 
@@ -59,7 +81,7 @@ void MainWindow::on_checkBox_stateChanged(int arg1)
 QCoro::Task<void> MainWindow::on_pbStart_clicked()
 {
     LSCOPE
-    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime());
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx});
     const QList<QString> &res = co_await stream.result(); // full result set is in res
     showResult(modelFull, res);
 }
@@ -72,8 +94,8 @@ QCoro::Task<void> MainWindow::on_pbStart_clicked()
 QCoro::Task<void> MainWindow::on_pushByPage_clicked()
 {
     LSCOPE
-    if (co_await _stream->hasNext()) {
-        const QList<QString> &res = _stream->next();
+    if (co_await _stream.hasNext()) {
+        const QList<QString> &res = _stream.next();
         showResult(modelPaged, res);
     }
 }
@@ -86,7 +108,7 @@ QCoro::Task<void> MainWindow::on_pushByPage_clicked()
 void MainWindow::on_pbSignalSlot_clicked()
 {
     LSCOPE
-    auto stream = new db::Stream<QList<QString>>(db::Db::the->peopleGet(QDateTime::currentDateTime()));
+    auto stream = new db::Stream<QList<QString>>(db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx}));
     stream->result([stream, this](const auto &res) {
         showResult(modelFull, res);
         delete stream;
@@ -100,7 +122,7 @@ void MainWindow::on_pbSignalSlot_clicked()
 QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
 {
     LSCOPE
-    const QList<QString> &res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result();
+    const QList<QString> &res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), {testCtx}).result();
     showResult(modelFullAll, res);
 }
 
@@ -112,13 +134,10 @@ QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
 void MainWindow::on_pbSignalSlotAll_clicked()
 {
     LSCOPE
-    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx));
+    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime(), {testCtx}));
     task->result([task, this](const auto &res) {
         showResult(modelFullAll, res);
         delete task;
     });
 }
-
-
-
 

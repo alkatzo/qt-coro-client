@@ -4,6 +4,8 @@
 #include <QCoroAsyncGenerator>
 #include <QDateTime>
 
+#include "DB/deleters.h"
+
 namespace db { namespace rest {
 
 inline bool isRestApi(const QString &name) {
@@ -15,7 +17,7 @@ class RestApiImpl
 public:
     RestApiImpl();
 
-    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime dt);
+    QCoro::AsyncGenerator<QList<QString>> peopleGet(QDateTime dt, db::Cancel c);
     QCoro::Task<QList<QString>> peopleGetAll(QDateTime dt);
 };
 

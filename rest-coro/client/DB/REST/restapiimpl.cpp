@@ -5,15 +5,28 @@
 
 namespace db { namespace rest {
 
+bool stop(const Cancel& c) {
+    return !c.ctx || c.stop_token.stop_requested();
+}
+
 RestApiImpl::RestApiImpl() {}
 
-QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt)
+QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt, db::Cancel c)
 {
     auto api = er::IntegrationManager::erApi<er::ApiDefault>().release();
 
     for (int i = 1; i < 4; i++) {
+        if (stop(c)) {
+            LOG << "Cancelled";
+            break;
+        }
         LOG << "Awaiting next page";
         const QList<er::ER__people_get_200_response_inner> result = co_await api->peopleGet(dt, i);
+        if (stop(c)) {
+            deleteResults(result);
+            LOG << "Cancelled";
+            break;
+        }
         QList<QString> ret;
         for (const er::ER__people_get_200_response_inner& e : result) {
             QString str = QString("%1 %2 %3").arg(e.getFirstName()).arg(e.getLastName()).arg(e.getDateOfBirth().toString());

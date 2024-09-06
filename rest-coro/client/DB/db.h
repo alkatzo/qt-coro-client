@@ -2,8 +2,9 @@
 
 #include <QObject>
 
-#include "stream.h"
-#include "task.h"
+#include "DB/stream.h"
+#include "DB/task.h"
+#include "DB/deleters.h"
 
 namespace db {
 /**
@@ -27,8 +28,8 @@ public:
     static Db *makeDB();
 
 public:
-    virtual Stream<QList<QString>> peopleGet(QDateTime dt, QObject *ctx = alive.get()) = 0;
-    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, QObject *ctx = alive.get()) = 0;
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt, Cancel c = { alive.get() }) = 0;
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, Cancel c = { alive.get() }) = 0;
 };
 
 }

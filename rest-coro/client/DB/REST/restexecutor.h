@@ -2,6 +2,7 @@
 
 #include <QtConcurrent>
 
+#include "DB/deleters.h"
 #include "DB/helper.h"
 #include "er_base.h"
 #include "DB/stream.h"
@@ -21,14 +22,21 @@ public:
     RestExecutor() {
     }
 
-    template<typename O, typename R, typename... Ps, typename... As>
-    auto sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
-        return (o->*method)(args...);
+    template<typename DeleterT, typename O, typename R, typename... Ps, typename... As>
+    R sync(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
+        QList<QString> res = co_await (o->*method)(args...);
+
+        if (!c.ctx) {
+            DeleterT::free(res);
+            co_return {};
+        }
+
+        co_return res;
     }
 
-    template<typename O, typename R, typename... Ps, typename... As>
-    auto sync_paged(QString s, O *o, R (O::*method)(Ps...), As... args) {
-        return sync(s, o, method, args...);
+    template<typename DeleterT, typename O, typename R, typename... Ps, typename... As>
+    auto sync_paged(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
+        return (o->*method)(args..., c);
     }
 };
 

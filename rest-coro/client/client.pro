@@ -36,6 +36,7 @@ HEADERS += \
     DB/backend.h \
     DB/concepts.h \
     DB/db.h \
+    DB/deleters.h \
     DB/helper.h \
     DB/stream.h \
     DB/task.h \

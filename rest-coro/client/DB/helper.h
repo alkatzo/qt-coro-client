@@ -35,7 +35,7 @@ inline void log_finish(QString s, const R&) {
     LOG_NO_FUNC << s << "Finished";
 }
 
-template<QPtrContainer R>
+template<Container R>
 inline void log_finish(QString s, const R& r) {
     LOG_NO_FUNC << s << "Finished #Entries:" << r.size();;
 }

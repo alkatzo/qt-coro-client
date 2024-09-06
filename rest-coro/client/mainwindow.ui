@@ -6,145 +6,213 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>883</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pbStart">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>101</width>
-      <height>24</height>
+      <x>10</x>
+      <y>0</y>
+      <width>861</width>
+      <height>611</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
+    <property name="currentIndex">
+     <number>0</number>
     </property>
-    <property name="toolTip">
-     <string>Fetch full result using coro with pages</string>
+    <property name="tabsClosable">
+     <bool>false</bool>
     </property>
-    <property name="text">
-     <string>Fetch all coro</string>
-    </property>
-   </widget>
-   <widget class="QListView" name="listViewPaged">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>80</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListView" name="listViewFull">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>80</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushByPage">
-    <property name="geometry">
-     <rect>
-      <x>549</x>
-      <y>20</y>
-      <width>171</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Load next page on demand</string>
-    </property>
-    <property name="text">
-     <string>Fetch next page</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pbSignalSlot">
-    <property name="geometry">
-     <rect>
-      <x>149</x>
-      <y>20</y>
-      <width>131</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Fetsh all by signal using pages</string>
-    </property>
-    <property name="text">
-     <string>Fetch all signal</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pbStartAll">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>320</y>
-      <width>101</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fetch all coro</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pbSignalSlotAll">
-    <property name="geometry">
-     <rect>
-      <x>169</x>
-      <y>320</y>
-      <width>101</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fetch all signal</string>
-    </property>
-   </widget>
-   <widget class="QListView" name="listViewFullAll">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>360</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>320</y>
-      <width>78</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Context</string>
-    </property>
+    <widget class="QWidget" name="tab1">
+     <attribute name="title">
+      <string>Tab 1</string>
+     </attribute>
+     <widget class="QListView" name="listViewFullAll">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>390</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListView" name="listViewFull">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>110</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushByPage">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>50</y>
+        <width>171</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>Load next page on demand via coro generator</string>
+      </property>
+      <property name="text">
+       <string>Fetch next page</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbStartAll">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>350</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Fetch full result using coro single page</string>
+      </property>
+      <property name="text">
+       <string>Fetch all coro</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbStart">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>50</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>Fetch full result using coro with pages</string>
+      </property>
+      <property name="text">
+       <string>Fetch all coro</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbSignalSlotAll">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>350</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Fetch full result via callback single page</string>
+      </property>
+      <property name="text">
+       <string>Fetch all callback</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>491</x>
+        <y>350</y>
+        <width>78</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Context</string>
+      </property>
+     </widget>
+     <widget class="QListView" name="listViewPaged">
+      <property name="geometry">
+       <rect>
+        <x>491</x>
+        <y>110</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbSignalSlot">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>50</y>
+        <width>131</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>Fetch full result using coro with pages via callback</string>
+      </property>
+      <property name="text">
+       <string>Fetch all callback</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>328</x>
+        <y>9</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Multi-page</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>310</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Single page</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab2">
+     <attribute name="title">
+      <string>Tab 2</string>
+     </attribute>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -152,7 +220,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>883</width>
      <height>21</height>
     </rect>
    </property>

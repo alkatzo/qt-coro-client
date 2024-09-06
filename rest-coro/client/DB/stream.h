@@ -4,19 +4,21 @@
 #include <QCoroAsyncGenerator>
 
 #include "DB/concepts.h"
+#include "DB/helper.h"
 
 namespace db {
 
-template<QContainer T>
+template<Container T>
 class Stream
 {
 public:
     Stream(const Stream &) = delete;
     Stream &operator=(const Stream &) = delete;
+    Stream() = default;
     Stream(Stream &&) noexcept = default;
     Stream &operator=(Stream &&) noexcept = default;
-
-    Stream(QCoro::AsyncGenerator<T> &&g, QObject *ctx) : generator(std::move(g)), ctx(ctx) {}
+    Stream(QCoro::AsyncGenerator<T> &&g) : generator(std::move(g)) {}
+    ~Stream() = default;
 
     QCoro::Task<bool> hasNext() {
         if (eos) {
@@ -37,7 +39,6 @@ public:
         return *it;
     }
 
-    template<typename DeleterT = Deleter>
     QCoro::Task<T> result() {
         it = co_await generator.begin();
 
@@ -54,7 +55,7 @@ public:
         co_return res;
     }
 
-    template<typename DeleterT = Deleter, typename CB>
+    template<typename CB>
     requires (std::is_invocable_v<CB, T>)
     QCoro::Task<> result(CB &&cb) {
         // Move the callback into the coroutine, otherwise the temp cb is destroyed after the coro is suspended
@@ -67,7 +68,6 @@ public:
 
 private:
     QCoro::AsyncGenerator<T> generator;
-    QPointer<QObject> ctx;
     QCoro::AsyncGenerator<T>::iterator it{nullptr};
     bool eos{false};
 };

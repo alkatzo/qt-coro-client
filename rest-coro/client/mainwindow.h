@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QListView>
 
+#include <stop_token>
+
 #include "qcoro/qcorotask.h"
 #include "openapi/ER_DefaultApi.h"
 #include "DB/stream.h"
@@ -31,6 +33,8 @@ private:
         m.setStringList(lst);
     }
 
+    db::Stream<QList<QString>> createStream();
+
 private slots:
     // Paged
     QCoro::Task<void> on_pbStart_clicked();
@@ -46,6 +50,8 @@ private slots:
 
     void on_checkBox_stateChanged(int arg1);
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
 
@@ -53,7 +59,9 @@ private:
     QStringListModel modelFullAll;
     QStringListModel modelPaged;
 
-    db::Stream<QList<QString>> * _stream;
+    db::Stream<QList<QString>> _stream;
+
+    std::stop_source stop_source;
 
     QObject *testCtx = nullptr;
 };
