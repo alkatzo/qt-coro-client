@@ -9,7 +9,7 @@
 #include "DB/REST/restapiimpl.h"
 #include "DB/REST/restexecutor.h"
 #include "DB/backend.h"
-#include "DB/helper.h"
+#include "DB/loghelper.h"
 
 
 MainWindow::MainWindow(QWidget *parent)

@@ -5,9 +5,7 @@
 #include <QCoroAsyncGenerator>
 
 #include "DB/deleters.h"
-#include "DB/RDBMS/connectionmanager.h"
-#include "DB/RDBMS/sqlquery.h"
-#include "DB/helper.h"
+#include "DB/loghelper.h"
 
 namespace db { namespace rdbms {
 
@@ -62,7 +60,7 @@ public:
      * @return QCoro::Task<R>
      * Launches O::*method in a seprate thread, co_awaits on its results via QFuture and co_returns QCoro::Task<R>
      */
-    template<typename DeleterT, typename O, typename R, typename... Ps, typename... As>
+    template<typename O, typename R, typename... Ps, typename... As>
     QCoro::Task<R> sync(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
         LSCOPE
         std::function<R()> fun = [=, this]() {
@@ -72,7 +70,7 @@ public:
         const R &res = co_await QtConcurrent::run(&threadpool, fun);
 
         if (!c.ctx) {
-            DeleterT::free(res);
+            free(res);
             co_return {};
         }
 
@@ -87,10 +85,10 @@ public:
      * Sql paging simulation is required in order to match the one from paged REST APIs
      * It gets converted to Stream<R> up the stack
      */
-    template<typename DeleterT, typename O, typename R, typename... Ps, typename... As>
+    template<typename O, typename R, typename... Ps, typename... As>
     QCoro::AsyncGenerator<R> sync_paged(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
         LSCOPE
-        QList<QString> ret = co_await sync<DeleterT>(s + syncpagedLog, c, o, method, args...);
+        QList<QString> ret = co_await sync(s + syncpagedLog, c, o, method, args...);
         co_yield ret;
     }
 

@@ -3,7 +3,9 @@
 #include <QCoroTask>
 #include <QCoroFuture>
 #include <QtConcurrent>
-#include <QDateTime>
+#include <QThread>
+
+#include "DB/RDBMS/dbtraits.h"
 
 namespace db { namespace rdbms {
 

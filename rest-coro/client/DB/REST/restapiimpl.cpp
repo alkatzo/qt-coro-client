@@ -1,7 +1,7 @@
 #include "restapiimpl.h"
 
 #include "er_integrationmanager.h"
-#include "DB/helper.h"
+#include "DB/loghelper.h"
 
 namespace db { namespace rest {
 
@@ -23,7 +23,7 @@ QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt, db::
         LOG << "Awaiting next page";
         const QList<er::ER__people_get_200_response_inner> result = co_await api->peopleGet(dt, i);
         if (stop(c)) {
-            deleteResults(result);
+            free(result);
             LOG << "Cancelled";
             break;
         }

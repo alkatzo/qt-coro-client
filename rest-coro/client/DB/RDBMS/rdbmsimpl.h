@@ -1,14 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include <QtSql>
-#include <QtDebug>
-#include <QFuture>
-#include <QCoroTask>
-#include <QCoroAsyncGenerator>
-#include <QThread>
+#include <QDateTime>
 
-#include "DB/RDBMS/dbtraits.h"
 #include "DB/RDBMS/sqlquery.h"
 
 namespace db { namespace rdbms {

@@ -3,7 +3,6 @@
 #include <QCoroTask>
 
 #include "DB/concepts.h"
-#include "DB/helper.h"
 
 namespace db {
 

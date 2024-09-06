@@ -26,7 +26,6 @@ HEADERS += \
     DB/RDBMS/connectionmanager.h \
     DB/RDBMS/dbpoolexecutor.h \
     DB/RDBMS/dbtraits.h \
-    DB/RDBMS/mssql.h \
     DB/RDBMS/odbcclient.h \
     DB/RDBMS/rdbmsimpl.h \
     DB/RDBMS/sqlquery.h \
@@ -37,7 +36,7 @@ HEADERS += \
     DB/concepts.h \
     DB/db.h \
     DB/deleters.h \
-    DB/helper.h \
+    DB/loghelper.h \
     DB/stream.h \
     DB/task.h \
     er_apidefault.h \

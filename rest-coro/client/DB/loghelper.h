@@ -3,12 +3,14 @@
 #include <QDateTime>
 #include <QThread>
 #include <QDebug>
+#include <QLoggingCategory>
 
 #include "DB/concepts.h"
 
-#define TID QString("(%1)").arg((long long)QThread::currentThreadId())
+static Q_LOGGING_CATEGORY(backend, "sr.backend")
 
-#define LOG_NO_FUNC qDebug().noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << TID
+#define TID QString("(%1)").arg((long long)QThread::currentThreadId())
+#define LOG_NO_FUNC qCDebug(backend).noquote() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz") << TID
 #define LOG LOG_NO_FUNC << __func__
 
 struct LogScope {

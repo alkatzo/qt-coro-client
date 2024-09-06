@@ -33,4 +33,8 @@ struct DBTraits {
     using ConMgrT = db::rdbms::ODBCConnectionManager<ODBCT>;
 };
 
+struct MSSQL {
+    using ODBCAdapterT  = MSODBCAdapter;
+};
+
 }}

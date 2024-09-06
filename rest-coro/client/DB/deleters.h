@@ -1,11 +1,11 @@
 #pragma once
 
+#include <QObject>
+
 #include <stop_token>
 
 #include "DB/concepts.h"
-#include "DB/helper.h"
 
-#include "er_integrationmanager.h"
 
 namespace db {
 
@@ -21,26 +21,22 @@ struct Cancel {
 class Deleter {
 public:
     template<typename T>
-    static void free(const T &) {
-        LOG << "Non-deletable";
-    }
+    static void free(const T &) { }
 
     template<PtrContainer T>
     static void free(const T &arg) {
-        LOG << "Deleting PtrContainer";
         qDeleteAll(arg);
     }
 
     template<PtrType T>
     static void free(const T &arg) {
-        LOG << "Deleting Ptr";
         delete arg;
     }
 };
 
 
 template<typename T>
-inline void deleteResults(const T& res) {
+inline void free(const T& res) {
     Deleter::free(res);
 }
 

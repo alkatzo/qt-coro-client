@@ -4,7 +4,6 @@
 #include <QCoroAsyncGenerator>
 
 #include "DB/concepts.h"
-#include "DB/helper.h"
 
 namespace db {
 
