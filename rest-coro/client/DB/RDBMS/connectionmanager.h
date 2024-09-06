@@ -7,6 +7,7 @@
 
 #include "DB/RDBMS/odbcclient.h"
 #include "DB/RDBMS/sqlquery.h"
+#include "DB/loghelper.h"
 
 namespace db { namespace rdbms {
 
@@ -48,7 +49,7 @@ public:
             // Set connection's DSN
             con.setDatabaseName(ODBC::dsn);
             connections.insert(conName, 0);
-            qDebug() << __FUNCTION__ << "New ODBC connection added:" << conName;
+            LOG << "New ODBC connection added:" << conName;
         }
 
         // get ODBCAdapter from the traits
@@ -57,7 +58,7 @@ public:
         SqlQuery query(con, odbc);
 
         if (!con.isOpen() && !con.open()) {
-            qDebug() << __FUNCTION__ << "Error:" << con.lastError().text();
+            LOG << "Error:" << con.lastError().text();
         }
         else {
             query.setForwardOnly(true);

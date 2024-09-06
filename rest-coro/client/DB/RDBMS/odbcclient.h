@@ -2,7 +2,6 @@
 
 #include <QString>
 #include <QtSql>
-#include <QDebug>
 
 #include <memory>
 
