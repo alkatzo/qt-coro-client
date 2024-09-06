@@ -39,7 +39,7 @@ struct IODBCAdapter {
     virtual ConnectionStringBuilder connectionStringBuilder() = 0;
 };
 
-class MSODBCAdapter : public IODBCAdapter {
+class MSODBCAdapter final : public IODBCAdapter {
 public:
     constexpr static auto type = "mssql";    
     static QString dsn();

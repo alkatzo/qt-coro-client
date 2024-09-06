@@ -28,8 +28,8 @@ public:
     static Db *makeDB();
 
 public:
-    virtual Stream<QList<QString>> peopleGet(QDateTime dt, Cancel c = { alive.get() }) = 0;
-    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, Cancel c = { alive.get() }) = 0;
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt, Cancel c = { alive.get(), {} }) = 0;
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, Cancel c = { alive.get(), {} }) = 0;
 };
 
 }

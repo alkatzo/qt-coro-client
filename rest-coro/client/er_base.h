@@ -7,6 +7,7 @@
 
 #include "openapi/ER_HttpRequest.h"
 #include "er_rapifuture.h"
+#include "DB/loghelper.h"
 
 namespace er {
 
@@ -21,7 +22,7 @@ protected:
      */
     template<class T, class Source, class... Args>
     void onSuccess(const Source &source, void (T::*signal)(Args...), Args... args) {
-        qDebug() << source << OK;
+        LOG << source << OK;
         Q_EMIT (static_cast<T*>(this)->*signal)(args...);
     }
     /**
@@ -31,8 +32,8 @@ protected:
     void onError(const Source &source, Call call, int authAttempt, int allowedAttempts,
                  void (T::*signalErr)(ER_HttpRequestWorker*, QNetworkReply::NetworkError, QString ),
                  ER_HttpRequestWorker *worker, QNetworkReply::NetworkError error_type, QString error_str) {
-        qDebug() << source << Error << "ErrorType:" << error_type << "ErrorText:" << error_str <<
-                    "HttpResponseCode:" << worker->getHttpResponseCode() << "ResponseHeaders:" << worker->getResponseHeaders();
+        LOG << source << Error << "ErrorType:" << error_type << "ErrorText:" << error_str <<
+            "HttpResponseCode:" << worker->getHttpResponseCode() << "ResponseHeaders:" << worker->getResponseHeaders();
 
         Q_EMIT (static_cast<T*>(this)->*signalErr)(worker, error_type, error_str);
     }
@@ -41,7 +42,7 @@ protected:
      */
     template<class T, class Source, class API>
     void onCompleted(const Source &source, void (T::*signalCompleted)(), API *api) {
-        qDebug() << source << Completed;
+        LOG << source << Completed;
         Q_EMIT (static_cast<T*>(this)->*signalCompleted)();
         requestCompleted();
         api->deleteLater();
@@ -82,7 +83,7 @@ Q_SIGNALS: \
 
 #define _ER_DEFINE_SIGNALS(SHIM_API, SHIM_METHOD, API, API_METHOD) \
     auto source = __FUNCTION__; \
-    qDebug() << source; \
+    LOG << source; \
     auto s_success = &SHIM_API::SHIM_METHOD##CompletedOK; \
     auto s_error = &SHIM_API::SHIM_METHOD##CompletedE; \
     auto s_completed = &SHIM_API::requestCompleted; \

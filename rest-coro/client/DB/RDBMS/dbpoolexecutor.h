@@ -46,7 +46,6 @@ public:
      */
     template<typename O, typename R, typename... Ps, typename... As>
     R _sync(QString s, O *o, R (O::*method)(Ps...), As... args) {
-        LSCOPE
         db::log_start(s + _syncLog);
         auto query = cm.makeQuery();
         R r = (o->*method)(args..., query);
@@ -62,11 +61,9 @@ public:
      */
     template<typename O, typename R, typename... Ps, typename... As>
     QCoro::Task<R> sync(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
-        LSCOPE
         std::function<R()> fun = [=, this]() {
             return _sync(s + syncLog, o, method, args...);
         };
-        log_start(QString("%1 threadpool #activeThreads: %2").arg(s).arg(threadpool.activeThreadCount()));
         const R &res = co_await QtConcurrent::run(&threadpool, fun);
 
         if (!c.ctx) {

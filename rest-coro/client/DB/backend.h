@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QDateTime>
+
 #include "DB/db.h"
 
 namespace db {

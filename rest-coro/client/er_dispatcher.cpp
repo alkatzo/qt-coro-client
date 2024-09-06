@@ -1,6 +1,6 @@
 #include "er_dispatcher.h"
 
-#include <QDebug>
+#include "DB/loghelper.h"
 
 namespace er {
 
@@ -31,13 +31,13 @@ void Dispatcher::send(const std::function<void ()> &request) {
 }
 
 void Dispatcher::requestCompleted() {
-    qDebug() << __FUNCTION__ << "queue size =" << _queue.size();
+    LOG << "queue size =" << _queue.size();
     _processing = false;
     Q_EMIT _requestCompleted();
 }
 
 void Dispatcher::_process() {
-    qDebug() << __FUNCTION__ << "_processing =" << _processing << "size =" << _queue.size();
+    LOG << "_processing =" << _processing << "size =" << _queue.size();
     if (!_processing && !_queue.empty()) {
         _processing = true;
         std::function<void ()> request = _queue.front();
