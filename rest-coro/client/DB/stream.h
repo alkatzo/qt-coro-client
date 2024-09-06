@@ -25,7 +25,7 @@ public:
             co_return false;
         }
 
-        if (it == QCoro::AsyncGenerator<T>::iterator(nullptr)) {
+        if (it == typename QCoro::AsyncGenerator<T>::iterator(nullptr)) {
             it = co_await generator.begin();
         }
         else if (it != generator.end()) {

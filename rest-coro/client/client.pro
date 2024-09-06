@@ -57,6 +57,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 # ZLIB
 win32:INCLUDEPATH *= $$[QT_INSTALL_HEADERS]/QtZlib
+unix:!macx:!wasm: !CONFIG(link_pkgconfig): CONFIG += link_pkgconfig
+unix:!macx:!wasm: PKGCONFIG += zlib
 
 include($$PWD/qcoro/qcoro.pri)
 include($$PWD/openapi/ER_client.pri)
