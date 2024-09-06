@@ -15,10 +15,6 @@
 namespace db {
 
 Db *Db::makeDB() {
-    if (the != nullptr) {
-        delete the;
-        the = nullptr;
-    }
 
     // QString driver = "mssql";
     QString driver = "restapi";
@@ -26,10 +22,10 @@ Db *Db::makeDB() {
     if (db::rdbms::isMssql(driver)) {
         using DBTraitsT = db::rdbms::DBTraits<db::rdbms::MSSQL>;
         DBTraitsT::ODBCT::refresh();
-        the = new db::Backend<db::rdbms::RdbmsImpl, db::rdbms::DBPoolExecutor<DBTraitsT::ConMgrT>, Deleter>;
+        the.reset(new db::Backend<db::rdbms::RdbmsImpl, db::rdbms::DBPoolExecutor<DBTraitsT::ConMgrT>, Deleter>);
     }
     else if (db::rest::isRestApi(driver)) {
-        the = new db::Backend<db::rest::RestApiImpl, db::rest::RestExecutor, Deleter>;
+        the.reset(new db::Backend<db::rest::RestApiImpl, db::rest::RestExecutor, Deleter>);
     }
 
     if (!the) {
@@ -37,7 +33,7 @@ Db *Db::makeDB() {
         throw std::exception();
     }
 
-    return the;
+    return the.get();
 }
 
 }

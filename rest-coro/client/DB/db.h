@@ -20,7 +20,7 @@ private:
     static inline QScopedPointer<QObject> alive{new QObject};
 
 public:
-    inline static Db *the = nullptr;
+    inline static QScopedPointer<Db> the;
 
 public:
     Db() = default;
