@@ -11,7 +11,7 @@ namespace db {
  *It dispatches execution of the calls to appropriate implementation class Impl constructed during application initialisation stage
  *How the calls are executed is determined by the executor policy Ex class
  */
-template<typename Impl, typename Ex>
+template<typename Impl, typename Ex, typename DeleterT>
 class Backend : public Db
 {
 public:
@@ -29,9 +29,8 @@ private:
 
     // DB interface
 public:
-    virtual QCoro::Task<QList<QString>> peopleGet(QDateTime dt) override { co_return co_await ex.template sync<Impl>(__func__, impl, &Impl::peopleGet, dt); }
-    virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, cb, impl, &Impl::peopleGet, dt); }
-    virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) override { ex.template async<Impl>(__func__, ctx, cb, impl, &Impl::peopleGet, dt); }
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt, Cancel c) override { return ex.template sync_paged<DeleterT, Impl>(__func__, c, impl, &Impl::peopleGet, dt); }
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, Cancel c) override { return ex.template sync<DeleterT, Impl>(__func__, c, impl, &Impl::peopleGetAll, dt); }
 };
 
 }

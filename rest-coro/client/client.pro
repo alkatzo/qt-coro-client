@@ -1,4 +1,4 @@
-QT       += core gui concurrent network quickcontrols2
+QT       += core gui sql concurrent network quickcontrols2
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,7 +10,9 @@ else:win32: QMAKE_CXXFLAGS *= -std:c++20
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    DB/REST/pager.cpp \
+    DB/RDBMS/odbcclient.cpp \
+    DB/RDBMS/rdbmsimpl.cpp \
+    DB/RDBMS/sqlquery.cpp \
     DB/REST/restapiimpl.cpp \
     DB/db.cpp \
     er_apidefault.cpp \
@@ -21,14 +23,23 @@ SOURCES += \
     mainwindow.cpp \
 
 HEADERS += \
+    DB/RDBMS/connectionmanager.h \
+    DB/RDBMS/dbpoolexecutor.h \
+    DB/RDBMS/dbtraits.h \
+    DB/RDBMS/mssql.h \
+    DB/RDBMS/odbcclient.h \
+    DB/RDBMS/rdbmsimpl.h \
+    DB/RDBMS/sqlquery.h \
     DB/REST/helper.h \
-    DB/REST/pager.h \
     DB/REST/restapiimpl.h \
     DB/REST/restexecutor.h \
     DB/backend.h \
     DB/concepts.h \
     DB/db.h \
+    DB/deleters.h \
     DB/helper.h \
+    DB/stream.h \
+    DB/task.h \
     er_apidefault.h \
     er_base.h \
     er_dispatcher.h \

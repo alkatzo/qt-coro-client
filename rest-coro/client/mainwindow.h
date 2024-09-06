@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListView>
+
+#include <stop_token>
 
 #include "qcoro/qcorotask.h"
 #include "openapi/ER_DefaultApi.h"
+#include "DB/stream.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,23 +25,44 @@ public:
     ~MainWindow();
 
 private:
-    void exec_connect();
+    void showResult(QStringListModel &m, const auto &res) {
+        QStringList lst = m.stringList();
+        for (const auto &s : res) {
+            lst.append(s);
+        }
+        m.setStringList(lst);
+    }
 
-    QCoro::Task<void> exec_await();
-    QCoro::Task<QList<er::ER__people_get_200_response_inner>> exec_awaitCo();
-
-    QCoro::Task<void> exec_direct_rest();
-
-    QCoro::Task<void> exec_rest();
-
-    QCoro::Task<void> exec_rest_via_db();
-
-    QCoro::Task<void> exec_rest_via_generator();
+    db::Stream<QList<QString>> createStream();
 
 private slots:
-    void on_pbStart_clicked();
+    // Paged
+    QCoro::Task<void> on_pbStart_clicked();
+
+    QCoro::Task<void> on_pushByPage_clicked();
+
+    void on_pbSignalSlot_clicked();
+
+    // Full
+    QCoro::Task<void> on_pbStartAll_clicked();
+
+    void on_pbSignalSlotAll_clicked();
+
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_tabWidget_currentChanged(int index);
 
 private:
     Ui::MainWindow *ui;
+
+    QStringListModel modelFull;
+    QStringListModel modelFullAll;
+    QStringListModel modelPaged;
+
+    db::Stream<QList<QString>> _stream;
+
+    std::stop_source stop_source;
+
+    QObject *testCtx = nullptr;
 };
 #endif // MAINWINDOW_H

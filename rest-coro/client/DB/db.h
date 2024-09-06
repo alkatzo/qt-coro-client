@@ -1,7 +1,10 @@
 #pragma once
 
 #include <QObject>
-#include <QCoroTask>
+
+#include "DB/stream.h"
+#include "DB/task.h"
+#include "DB/deleters.h"
 
 namespace db {
 /**
@@ -12,6 +15,10 @@ namespace db {
 class Db : public QObject
 {
     Q_OBJECT
+
+private:
+    static inline QScopedPointer<QObject> alive{new QObject};
+
 public:
     inline static Db *the = nullptr;
 
@@ -21,9 +28,8 @@ public:
     static Db *makeDB();
 
 public:
-    virtual QCoro::Task<QList<QString>> peopleGet(QDateTime dt) = 0;
-    virtual void peopleGet(QDateTime dt, std::function <void(QList<QString>)> cb) = 0;
-    virtual void peopleGet(QDateTime dt, QObject *ctx, std::function <void(QList<QString>)> cb) = 0;
+    virtual Stream<QList<QString>> peopleGet(QDateTime dt, Cancel c = { alive.get() }) = 0;
+    virtual Task<QList<QString>> peopleGetAll(QDateTime dt, Cancel c = { alive.get() }) = 0;
 };
 
 }
