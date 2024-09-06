@@ -28,13 +28,16 @@ public:
 private:
     struct Promise {
         void setResult(const T& r) {
+            result = r;
+        }
+
+        void resume() {
             if (handle && !handle.done()) {
-                result = r;
                 handle.resume();
             }
         }
 
-        T result;
+        T result{};
         std::coroutine_handle<> handle = nullptr;
     };
 

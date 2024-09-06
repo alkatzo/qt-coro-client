@@ -27,17 +27,17 @@ namespace db {
 
 // Helper logging functions maybe delete later
 inline void log_start(QString s) {
-    LOG << s << "Started";
+    LOG_NO_FUNC << s << "Started";
 }
 
 template<typename R>
 inline void log_finish(QString s, const R&) {
-    LOG << s << "Finished";
+    LOG_NO_FUNC << s << "Finished";
 }
 
 template<QPtrContainer R>
 inline void log_finish(QString s, const R& r) {
-    LOG << s << "Finished #Entries:" << r.size();;
+    LOG_NO_FUNC << s << "Finished #Entries:" << r.size();;
 }
 
 }
