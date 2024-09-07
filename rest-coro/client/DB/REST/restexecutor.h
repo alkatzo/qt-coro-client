@@ -21,7 +21,7 @@ public:
     template<typename O, typename R, typename... Ps, typename... As>
     R sync(QString s, Cancel c, O *o, R (O::*method)(Ps...), As... args) {
         db::log_start(s + syncLog);
-        QList<QString> res = co_await (o->*method)(args...);
+        auto res = co_await (o->*method)(args...);
 
         if (!c.ctx) {
             free(res);
