@@ -10,6 +10,8 @@
 namespace db {
 
 struct Cancel {
+    Cancel(QObject* ctx) : ctx(ctx) {}
+    Cancel(QObject* ctx, const std::stop_token& st) : ctx(ctx), stop_token(st) {}
     QPointer<QObject> ctx;
     std::stop_token stop_token;
 };
