@@ -37,7 +37,7 @@ public:
     }
 
     operator QCoro::QmlTask() {
-        return QCoro::QmlTask(std::move(task));
+        return std::move(task);
     }
 
 private:

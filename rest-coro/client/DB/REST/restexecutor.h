@@ -23,7 +23,7 @@ public:
         db::log_start(s + syncLog);
         auto res = co_await (o->*method)(args...);
 
-        if (!c.ctx) {
+        if (c.stop()) {
             free(res);
             co_return {};
         }

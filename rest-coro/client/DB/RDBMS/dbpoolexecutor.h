@@ -66,7 +66,7 @@ public:
         };
         const R &res = co_await QtConcurrent::run(&threadpool, fun);
 
-        if (!c.ctx) {
+        if (c.stop()) {
             free(res);
             co_return {};
         }
