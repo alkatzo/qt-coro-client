@@ -6,7 +6,8 @@
 
 #include <stop_token>
 
-#include "qcoro/qcorotask.h"
+#include <QCoroTask>
+#include <QCoroQmlTask>
 #include "openapi/ER_DefaultApi.h"
 #include "DB/stream.h"
 
@@ -34,6 +35,8 @@ private:
     }
 
     db::Stream<QList<QString>> createStream();
+
+    Q_INVOKABLE QCoro::QmlTask qmlTaskTest();
 
 private slots:
     // Paged

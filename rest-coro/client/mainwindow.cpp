@@ -39,6 +39,12 @@ db::Stream<QList<QString> > MainWindow::createStream() {
     return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_source.get_token()});
 }
 
+QCoro::QmlTask MainWindow::qmlTaskTest()
+{
+    LSCOPE
+    return db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx);
+}
+
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
     LOG << index;

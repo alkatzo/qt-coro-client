@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QCoroTask>
+#include <QCoroQmlTask>
 
 #include "DB/concepts.h"
 
@@ -15,10 +16,10 @@ public:
     Task(Task &&) noexcept = default;
     Task &operator=(Task &&) noexcept = default;
 
-    Task(QCoro::Task<T> &&t) : _task(std::move(t)) {}
+    Task(QCoro::Task<T> &&t) : task(std::move(t)) {}
 
     QCoro::Task<T> result() {
-        const auto &res = co_await _task;
+        const auto &res = co_await task;
         co_return res;
     }
 
@@ -31,16 +32,16 @@ public:
     requires (std::is_invocable_v<CB, T>)
     QCoro::Task<> result(CB &&cb) {
         auto callback = std::forward<CB>(cb);
-        const auto &res = co_await _task;
+        const auto &res = co_await task;
         callback(res);
     }
 
-    QCoro::Task<T>&& task() {
-        return std::move(_task);
+    operator QCoro::QmlTask() {
+        return QCoro::QmlTask(std::move(task));
     }
 
 private:
-    QCoro::Task<T> _task;
+    QCoro::Task<T> task;
 };
 
 }
