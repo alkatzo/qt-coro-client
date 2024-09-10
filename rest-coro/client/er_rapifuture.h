@@ -2,12 +2,12 @@
 
 namespace er {
 
-class RAPI;
+class Client;
 
 template<typename T>
 class RAPIFuture
 {
-    friend class RAPI;
+    friend class Client;
 
 public:
     RAPIFuture() : promise(new Promise) {

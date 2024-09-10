@@ -29,7 +29,6 @@ HEADERS += \
     DB/RDBMS/odbcclient.h \
     DB/RDBMS/rdbmsimpl.h \
     DB/RDBMS/sqlquery.h \
-    DB/REST/helper.h \
     DB/REST/restapiimpl.h \
     DB/REST/restexecutor.h \
     DB/backend.h \

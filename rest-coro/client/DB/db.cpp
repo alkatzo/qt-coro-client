@@ -12,8 +12,8 @@ namespace db {
 
 Db *Db::makeDB() {
 
-    QString driver = "mssql";
-    // QString driver = "restapi";
+    // QString driver = "mssql";
+    QString driver = "restapi";
 
     if (db::rdbms::isMssql(driver)) {
         using DBTraitsT = db::rdbms::DBTraits<db::rdbms::MSSQL>;
