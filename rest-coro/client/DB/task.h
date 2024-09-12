@@ -19,8 +19,7 @@ public:
     Task(QCoro::Task<T> &&t) : task(std::move(t)) {}
 
     QCoro::Task<T> result() {
-        const auto &res = co_await task;
-        co_return res;
+        return std::move(task);
     }
 
     /**
@@ -30,10 +29,9 @@ public:
      */
     template<typename CB>
     requires (std::is_invocable_v<CB, T>)
-    QCoro::Task<> result(CB &&cb) {
-        auto callback = std::forward<CB>(cb);
+    QCoro::Task<> result(CB cb) {
         const auto &res = co_await task;
-        callback(res);
+        cb(res);
     }
 
     operator QCoro::QmlTask() {
