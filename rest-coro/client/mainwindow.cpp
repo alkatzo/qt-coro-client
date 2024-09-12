@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
 }
 
 db::Stream<QList<QString> > MainWindow::createStream() {
-    return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_source.get_token()});
+    return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_token});
 }
 
 QCoro::QmlTask MainWindow::qmlTaskTest()
@@ -50,12 +50,12 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     LOG << index;
     switch (index) {
     case 0: {
-        stop_source = std::stop_source();
+        stop_token = db::stop_token();
         _stream = createStream();
         break;
     }
     case 1:
-        stop_source.request_stop();
+        stop_token.request_stop();
         break;
     }
 }
@@ -87,7 +87,7 @@ void MainWindow::on_checkBox_stateChanged(int arg1)
 QCoro::Task<void> MainWindow::on_pbStart_clicked()
 {
     LSCOPE
-    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime(), testCtx);
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_token});
     const QList<QString> &res = co_await stream.result(); // full result set is in res
     showResult(modelFull, res);
 }

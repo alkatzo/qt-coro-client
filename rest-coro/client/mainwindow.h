@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QListView>
 
-#include <stop_token>
+#include "DB/stop_token.h"
 
 #include <QCoroTask>
 #include <QCoroQmlTask>
@@ -64,7 +64,7 @@ private:
 
     db::Stream<QList<QString>> _stream;
 
-    std::stop_source stop_source;
+    db::stop_token stop_token;
 
     QObject *testCtx = nullptr;
 };

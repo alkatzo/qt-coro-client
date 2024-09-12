@@ -9,7 +9,7 @@ RestApiImpl::RestApiImpl() {}
 
 QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt, db::Cancel c)
 {
-    auto api = er::IntegrationManager::erApi<er::ApiDefault>().release();
+    auto api = er::IntegrationManager::erApi<er::ApiDefault>();
 
     for (int i = 1; i < 4; i++) {
         if (c.stop()) {
@@ -32,21 +32,17 @@ QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt, db::
         co_yield ret;
         LOG << "Resume";
     }
-
-    api->deleteLater();
 }
 
 QCoro::Task<QList<QString> > RestApiImpl::peopleGetAll(QDateTime dt)
 {
-    auto api = er::IntegrationManager::erApi<er::ApiDefault>().release();
+    auto api = er::IntegrationManager::erApi<er::ApiDefault>();
     const QList<er::ER__people_get_200_response_inner> result = co_await api->peopleGet(dt);
     QList<QString> ret;
     for (const er::ER__people_get_200_response_inner& e : result) {
         QString str = QString("%1 %2 %3").arg(e.getFirstName()).arg(e.getLastName()).arg(e.getDateOfBirth().toString());
         ret.append(str);
     }
-
-    api->deleteLater();
 
     co_return ret;
 }

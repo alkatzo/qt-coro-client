@@ -23,7 +23,7 @@ public:
     template<typename Api>
     static std::unique_ptr<Api> api() {
         auto api = std::make_unique<Api>(_timeOut);
-        api->setNewServerForAllOperations(_server, _serverDesc, _serverVars);
+        api->setNewServerForAllOperations(_server, _serverDesc);
         return api;
     }
 
@@ -37,7 +37,6 @@ private:
     static inline QString _version;
     static inline uint _timeOut;
     static inline uint _pageSize;
-    static inline QMap<QString, ER_ServerVariable> _serverVars = QMap<QString, ER_ServerVariable>();
 };
 
 }
