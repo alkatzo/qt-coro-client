@@ -1,8 +1,31 @@
 #pragma once
+#include "zeus/expected.hpp"
 
 namespace er {
 
 class Client;
+
+template<typename T>
+struct Promise {
+    void setResult(const T& r) {
+        result = r;
+    }
+
+    void setError(uint code, const QString& text) {
+        error.first = code;
+        error.second = text;
+    }
+
+    void resume() {
+        if (handle && !handle.done()) {
+            handle.resume();
+        }
+    }
+
+    T result{};
+    std::pair<uint, QString> error;
+    std::coroutine_handle<> handle = nullptr;
+};
 
 template<typename T>
 class RAPIFuture
@@ -10,7 +33,7 @@ class RAPIFuture
     friend class Client;
 
 public:
-    RAPIFuture() : promise(new Promise) {
+    RAPIFuture() : promise(new Promise<T>) {
     }
 
     bool await_ready() const noexcept {
@@ -21,27 +44,17 @@ public:
         promise->handle = h;
     }
 
-    T await_resume() const {
-        return promise->result;
+    zeus::expected<T, std::pair<uint, QString>> await_resume() const {
+        if (promise->error.first == 0) {
+            return promise->result;
+        }
+        else {
+            return zeus::unexpected{promise->error};
+        }
     }
 
 private:
-    struct Promise {
-        void setResult(const T& r) {
-            result = r;
-        }
-
-        void resume() {
-            if (handle && !handle.done()) {
-                handle.resume();
-            }
-        }
-
-        T result{};
-        std::coroutine_handle<> handle = nullptr;
-    };
-
-    std::shared_ptr<Promise> promise;
+    std::shared_ptr<Promise<T>> promise;
 };
 
 }

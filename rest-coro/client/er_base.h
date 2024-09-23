@@ -28,6 +28,7 @@ protected:
         QObject::connect(api, s_api_error, api, [=, this](auto worker, auto error_type, auto error_str) {
             LOG << source << Error << "ErrorType:" << error_type << "ErrorText:" << error_str <<
                 "HttpResponseCode:" << worker->getHttpResponseCode() << "ResponseHeaders:" << worker->getResponseHeaders();
+            f.promise->setError(error_type, error_str);
         });
         // connect request completed
         QObject::connect(api, s_api_completed, api, [=, this]() {
