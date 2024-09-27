@@ -10,22 +10,6 @@
 namespace db {
 
 template<typename T>
-class Task;
-
-template<typename T>
-struct isTask : std::false_type {
-    using return_type = T;
-};
-
-template<typename T>
-struct isTask<QCoro::Task<T>> : std::true_type {
-    using return_type = typename Task<T>::value_type;
-};
-
-template<typename T>
-constexpr bool isTask_v = isTask<T>::value;
-
-template<typename T>
 class Task
 {
 public:
@@ -45,9 +29,9 @@ public:
      */
     template<typename CB>
     requires (std::is_invocable_v<CB, T>)
-    auto result(CB cb) -> std::conditional_t<isTask_v<std::invoke_result_t<CB, T>>, std::invoke_result_t<CB, T>, QCoro::Task<std::invoke_result_t<CB, T>>> { // by value, its a coro
+    auto result(CB cb) -> std::conditional_t<QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>, std::invoke_result_t<CB, T>, QCoro::Task<std::invoke_result_t<CB, T>>> {
         const auto &res = co_await task;
-        if constexpr (isTask_v<std::invoke_result_t<CB, T>>) {
+        if constexpr (QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>) {
             LOG << "Calling co_return co_await cb(res);";
             co_return co_await cb(res);
         }
