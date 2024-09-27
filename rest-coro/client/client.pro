@@ -36,6 +36,7 @@ HEADERS += \
     DB/db.h \
     DB/deleters.h \
     DB/loghelper.h \
+    DB/macros.h \
     DB/stop_token.h \
     DB/stream.h \
     DB/task.h \

@@ -141,12 +141,19 @@ QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
 QCoro::Task<void> MainWindow::on_pbSignalSlotAll_clicked()
 {
     LSCOPE
-        LOG << "Sync";
+    LOG << "Sync with callback";
     int res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) {
         showResult(modelFullAll, res);
         return res.size();
     });
-    LOG << "Sync #Entries:" << res;
+    LOG << "Sync with callback #Entries:" << res;
+
+    LOG << "Sync with coro callback";
+    int coro_res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) -> QCoro::Task<QList<QString>::size_type> {
+        showResult(modelFullAll, res);
+        co_return res.size();
+    });
+    LOG << "Sync with coro callback #Entries:" << coro_res;
 
     LOG << "Async";
     db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) {
