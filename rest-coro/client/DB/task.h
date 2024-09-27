@@ -29,9 +29,9 @@ public:
      */
     template<typename CB>
     requires (std::is_invocable_v<CB, T>)
-    QCoro::Task<> result(CB cb) {
+    auto result(CB cb) -> QCoro::Task<std::invoke_result_t<CB, T>> { // by value, its a coro
         const auto &res = co_await task;
-        cb(res);
+        co_return cb(res);
     }
 
     operator QCoro::QmlTask() {

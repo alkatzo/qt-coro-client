@@ -44,12 +44,12 @@ private slots:
 
     QCoro::Task<void> on_pushByPage_clicked();
 
-    void on_pbSignalSlot_clicked();
+    QCoro::Task<void> on_pbSignalSlot_clicked();
 
     // Full
     QCoro::Task<void> on_pbStartAll_clicked();
 
-    void on_pbSignalSlotAll_clicked();
+    QCoro::Task<void> on_pbSignalSlotAll_clicked();
 
     void on_checkBox_stateChanged(int arg1);
 
