@@ -4,6 +4,8 @@
 #include <QCoroQmlTask>
 
 #include "DB/concepts.h"
+#include "DB/macros.h"
+#include "DB/loghelper.h"
 
 namespace db {
 
@@ -11,16 +13,13 @@ template<typename T>
 class Task
 {
 public:
-    Task(const Task &) = delete;
-    Task &operator=(const Task &) = delete;
-    Task(Task &&) noexcept = default;
-    Task &operator=(Task &&) noexcept = default;
-
+    DISABLE_COPY(Task)
+    DEFAULT_MOVE(Task)
+    using value_type = T;
     Task(QCoro::Task<T> &&t) : task(std::move(t)) {}
 
     QCoro::Task<T> result() {
-        const auto &res = co_await task;
-        co_return res;
+        return std::move(task);
     }
 
     /**
@@ -30,12 +29,21 @@ public:
      */
     template<typename CB>
     requires (std::is_invocable_v<CB, T>)
-    QCoro::Task<> result(CB &&cb) {
-        auto callback = std::forward<CB>(cb);
+    auto result(CB cb) -> std::conditional_t<QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>, std::invoke_result_t<CB, T>, QCoro::Task<std::invoke_result_t<CB, T>>> {
         const auto &res = co_await task;
-        callback(res);
+        if constexpr (QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>) {
+            LOG << "Calling co_return co_await cb(res);";
+            co_return co_await cb(res);
+        }
+        else {
+            LOG << "Calling co_return cb(res);";
+            co_return cb(res);
+        }
     }
 
+    /**
+     * @brief operator QCoro::QmlTask - use to return db::Task from Q_INVOKABLE QCoro::QmlTask myMethod(..) to qml
+     */
     operator QCoro::QmlTask() {
         return std::move(task);
     }

@@ -4,6 +4,7 @@
 #include <QCoroAsyncGenerator>
 
 #include "DB/concepts.h"
+#include "DB/macros.h"
 
 namespace db {
 
@@ -11,11 +12,9 @@ template<Container T>
 class Stream
 {
 public:
-    Stream(const Stream &) = delete;
-    Stream &operator=(const Stream &) = delete;
+    DISABLE_COPY(Stream)
+    DEFAULT_MOVE(Stream)
     Stream() = default;
-    Stream(Stream &&) noexcept = default;
-    Stream &operator=(Stream &&) noexcept = default;
     Stream(QCoro::AsyncGenerator<T> &&g) : generator(std::move(g)) {}
     ~Stream() = default;
 
@@ -56,13 +55,14 @@ public:
 
     template<typename CB>
     requires (std::is_invocable_v<CB, T>)
-    QCoro::Task<> result(CB &&cb) {
-        // Move the callback into the coroutine, otherwise the temp cb is destroyed after the coro is suspended
-        auto callback = std::forward<CB>(cb);
-
+    auto result(CB cb) -> std::conditional_t<QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>, std::invoke_result_t<CB, T>, QCoro::Task<std::invoke_result_t<CB, T>>> {
         const auto &res = co_await result();
-
-        callback(res);
+        if constexpr (QCoro::detail::isTask_v<std::invoke_result_t<CB, T>>) {
+            co_return co_await cb(res);
+        }
+        else {
+            co_return cb(res);
+        }
     }
 
 private:

@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include <stop_token>
+#include "DB/stop_token.h"
 
 #include "DB/concepts.h"
 
@@ -12,7 +12,7 @@ namespace db {
 class Cancel {
 public:
     Cancel(QObject* ctx) : ctx(ctx) {}
-    Cancel(QObject* ctx, const std::stop_token& st) : ctx(ctx), stop_token(st) {}
+    Cancel(QObject* ctx, const db::stop_token& st) : ctx(ctx), stop_token(st) {}
 
     bool stop() const {
         return !ctx || stop_token.stop_requested();
@@ -20,7 +20,7 @@ public:
 
 private:
     QPointer<QObject> ctx;
-    std::stop_token stop_token;
+    db::stop_token stop_token;
 };
 
 /**

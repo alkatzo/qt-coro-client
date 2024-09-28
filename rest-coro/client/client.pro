@@ -29,7 +29,6 @@ HEADERS += \
     DB/RDBMS/odbcclient.h \
     DB/RDBMS/rdbmsimpl.h \
     DB/RDBMS/sqlquery.h \
-    DB/REST/helper.h \
     DB/REST/restapiimpl.h \
     DB/REST/restexecutor.h \
     DB/backend.h \
@@ -37,6 +36,8 @@ HEADERS += \
     DB/db.h \
     DB/deleters.h \
     DB/loghelper.h \
+    DB/macros.h \
+    DB/stop_token.h \
     DB/stream.h \
     DB/task.h \
     er_apidefault.h \

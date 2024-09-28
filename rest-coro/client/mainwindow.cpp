@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
 }
 
 db::Stream<QList<QString> > MainWindow::createStream() {
-    return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_source.get_token()});
+    return db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_token});
 }
 
 QCoro::QmlTask MainWindow::qmlTaskTest()
@@ -50,12 +50,12 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     LOG << index;
     switch (index) {
     case 0: {
-        stop_source = std::stop_source();
+        stop_token = db::stop_token();
         _stream = createStream();
         break;
     }
     case 1:
-        stop_source.request_stop();
+        stop_token.request_stop();
         break;
     }
 }
@@ -87,7 +87,7 @@ void MainWindow::on_checkBox_stateChanged(int arg1)
 QCoro::Task<void> MainWindow::on_pbStart_clicked()
 {
     LSCOPE
-    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime(), testCtx);
+    auto stream = db::Db::the->peopleGet(QDateTime::currentDateTime(), {testCtx, stop_token});
     const QList<QString> &res = co_await stream.result(); // full result set is in res
     showResult(modelFull, res);
 }
@@ -111,14 +111,15 @@ QCoro::Task<void> MainWindow::on_pushByPage_clicked()
  * Load full result set via signal / slot with pages
  * @return
  */
-void MainWindow::on_pbSignalSlot_clicked()
+QCoro::Task<void> MainWindow::on_pbSignalSlot_clicked()
 {
     LSCOPE
-    auto stream = new db::Stream<QList<QString>>(db::Db::the->peopleGet(QDateTime::currentDateTime(), testCtx));
-    stream->result([stream, this](const auto &res) {
+    LOG << "Sync";
+    int res = co_await db::Db::the->peopleGet(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) {
         showResult(modelFull, res);
-        delete stream;
+        return res.size();
     });
+    LOG << "Sync #Entries:" << res;
 }
 
 /**
@@ -137,13 +138,26 @@ QCoro::Task<void> MainWindow::on_pbStartAll_clicked()
  * Load full result set via signal / slot
  * @return
  */
-void MainWindow::on_pbSignalSlotAll_clicked()
+QCoro::Task<void> MainWindow::on_pbSignalSlotAll_clicked()
 {
     LSCOPE
-    auto task = new db::Task<QList<QString>>(db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx));
-    task->result([task, this](const auto &res) {
+    LOG << "Sync with callback";
+    int res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) {
         showResult(modelFullAll, res);
-        delete task;
+        return res.size();
+    });
+    LOG << "Sync with callback #Entries:" << res;
+
+    LOG << "Sync with coro callback";
+    int coro_res = co_await db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) -> QCoro::Task<QList<QString>::size_type> {
+        showResult(modelFullAll, res);
+        co_return res.size();
+    });
+    LOG << "Sync with coro callback #Entries:" << coro_res;
+
+    LOG << "Async";
+    db::Db::the->peopleGetAll(QDateTime::currentDateTime(), testCtx).result([this](const auto &res) {
+        showResult(modelFullAll, res);
     });
 }
 

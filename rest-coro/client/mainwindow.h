@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QListView>
 
-#include <stop_token>
+#include "DB/stop_token.h"
 
 #include <QCoroTask>
 #include <QCoroQmlTask>
@@ -44,12 +44,12 @@ private slots:
 
     QCoro::Task<void> on_pushByPage_clicked();
 
-    void on_pbSignalSlot_clicked();
+    QCoro::Task<void> on_pbSignalSlot_clicked();
 
     // Full
     QCoro::Task<void> on_pbStartAll_clicked();
 
-    void on_pbSignalSlotAll_clicked();
+    QCoro::Task<void> on_pbSignalSlotAll_clicked();
 
     void on_checkBox_stateChanged(int arg1);
 
@@ -64,7 +64,7 @@ private:
 
     db::Stream<QList<QString>> _stream;
 
-    std::stop_source stop_source;
+    db::stop_token stop_token;
 
     QObject *testCtx = nullptr;
 };
