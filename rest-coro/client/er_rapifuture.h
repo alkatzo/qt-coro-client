@@ -5,15 +5,14 @@ namespace er {
 
 class Client;
 
-template<typename T>
-struct Promise {
-    void setResult(const T& r) {
-        result = r;
-    }
+struct RAPIError {
+    int code{0};
+    QString text;
+};
 
-    void setError(uint code, const QString& text) {
-        error.first = code;
-        error.second = text;
+struct PromiseBase {
+    void setError(int code, const QString& text) {
+        error = {code, text};
     }
 
     void resume() {
@@ -22,10 +21,21 @@ struct Promise {
         }
     }
 
-    T result{};
-    std::pair<uint, QString> error;
+    RAPIError error;
     std::coroutine_handle<> handle = nullptr;
 };
+
+template<typename T>
+struct Promise : public PromiseBase {
+    void setResult(const T& r) {
+        result = r;
+    }
+
+    T result{};
+};
+
+template<>
+struct Promise<void> : public PromiseBase {};
 
 template<typename T>
 class RAPIFuture
@@ -44,17 +54,23 @@ public:
         promise->handle = h;
     }
 
-    zeus::expected<T, std::pair<uint, QString>> await_resume() const {
-        if (promise->error.first == 0) {
+    zeus::expected<T, RAPIError> await_resume() const {
+        if (promise->error.code == 0) {
             return promise->result;
         }
-        else {
-            return zeus::unexpected{promise->error};
-        }
+        return zeus::unexpected{promise->error};
     }
 
 private:
     std::shared_ptr<Promise<T>> promise;
 };
+
+template<>
+inline zeus::expected<void, RAPIError> RAPIFuture<void>::await_resume() const {
+    if (promise->error.code == 0) {
+        return zeus::expected<void, RAPIError>{};
+    }
+    return zeus::unexpected{promise->error};
+}
 
 }

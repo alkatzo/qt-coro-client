@@ -36,7 +36,7 @@ QCoro::AsyncGenerator<QList<QString> > RestApiImpl::peopleGet(QDateTime dt, db::
             LOG << "Resume";
         }
         else {
-            LOG << "Error" << res.error();
+            LOG << "Error" << res.error().code << res.error().text;
             break;
         }
     }
@@ -57,7 +57,7 @@ QCoro::Task<QList<QString> > RestApiImpl::peopleGetAll(QDateTime dt)
         co_return ret;
     }
     else {
-        LOG << "Error" << res.error();
+        LOG << "Error" << res.error().code << res.error().text;
         co_return {};
     }
 }
