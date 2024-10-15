@@ -39,6 +39,26 @@ protected:
         });
     }
 
+    void wire(auto source, auto s_api_success, auto s_api_error, auto s_api_completed, auto api, RAPIFuture<void> f) {
+        // connect successful response
+        QObject::connect(api, s_api_success, api, [=, this]() {
+            LOG << source << OK;
+        });
+        // connect full error response
+        QObject::connect(api, s_api_error, api, [=, this](auto worker, auto error_type, auto error_str) {
+            LOG << source << Error << "ErrorType:" << error_type << "ErrorText:" << error_str <<
+                "HttpResponseCode:" << worker->getHttpResponseCode() << "ResponseHeaders:" << worker->getResponseHeaders();
+            f.promise->setError(error_type, error_str);
+        });
+        // connect request completed
+        QObject::connect(api, s_api_completed, api, [=, this]() {
+            LOG << source << Completed;
+            requestCompleted();
+            api->deleteLater();
+            f.promise->resume();
+        });
+    }
+
 private:
     static constexpr char OK[] = "-> OK";
     static constexpr char Error[] = "-> Error";
@@ -59,6 +79,11 @@ private:
 #define WIRE_API_SIGNALS(RETURN_TYPE, CLASS, METHOD) \
     _WIRE_API_SIGNALS(CLASS, METHOD) \
     RAPIFuture<RETURN_TYPE> f; \
+    wire(source, s_api_success, s_api_error, s_api_completed, api, f);
+
+#define WIRE_API_SIGNALS_VOID(CLASS, METHOD) \
+    _WIRE_API_SIGNALS(CLASS, METHOD) \
+    RAPIFuture<void> f; \
     wire(source, s_api_success, s_api_error, s_api_completed, api, f);
 }
 
